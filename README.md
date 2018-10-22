@@ -46,7 +46,7 @@ b. Edit the file _<pathBuild>/MONITORING/config/build/env.build.properties_ to a
 	
 c. Run the build with Ant to produce the file _<pathBuild>/MONITORING/target/tar/MONITORING-<DATE>.tar_ 
     	
-- _cd \<pathBuild\>/MONITORING_
+- _cd <pathBuild>/MONITORING_
 - _ant -buildfile build.xml targetMon_
 
 
@@ -76,7 +76,7 @@ a. Untar file _MONITORING-<DATE>.tar_ generated in Build phase in a new director
 - _mkdir monitoring_
 - _chmod 777 monitoring_
 - _cd monitoring_
-- _tar xvfz /<pathBuild>/MONITORING/target/tar/MONITORING-<DATE>.tar_
+- _tar xvfz <pathBuild>/MONITORING/target/tar/MONITORING-<DATE>.tar_
 	
 b. Run the install.sh script with parameter _<IPAddressTarget>_ = Management IP address of the your's test-bed target
 	
@@ -92,8 +92,8 @@ c. Run command  docker-compose up  in background
 Once the Monitoring manager is running, please open in your browser the Monitoring WebGui from
 _http://<IPAddressTarget>:38080/FrontEnd_
 
-From Dashboard you will connect to Grafana Tool by user admin/monitoring:  you can see SummaryNODE dashboard for the node <IPAddressTarget>
-You can add more inventory services and their relative inventory nodes /inventory metrics from the Monitoring WebGUI application.
+From Dashboard you will connect to Grafana Tool by user admin/monitoring:  you can see SummaryNODE dashboard for the node _<IPAddressTarget>_
+You can add more inventory services and their relative inventory nodes / inventory metrics from the Monitoring WebGUI application.
 
 
 ## License
