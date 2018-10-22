@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Build-Tasks-Definition-fe" default="" basedir="./frontend/application/MonitoringFE">
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}/lib.test/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+			<classpath>
+				<pathelement location="${basedir}/lib.test/jacocoant.jar" />
+			</classpath>
+		</taskdef>
+
+		<taskdef resource="org/doxygen/tools/antlib.xml">
+			<classpath>
+				<pathelement location="${basedir}/lib.tools/ant_doxygen.jar" />
+			</classpath>
+		</taskdef>
+
+		<taskdef resource="proguard/ant/task.properties">
+			<classpath>
+				<pathelement location="${basedir}/lib.tools/proguard.jar" />
+			</classpath>
+		</taskdef>
+</project>

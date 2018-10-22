@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Common-Build-Targets" default="makeproject.dist" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<import file="build-tasks-fe.xml" />
+
+	<!-- PROPERTIES -->
+	<property environment="env" />
+
+	<if>
+		<not>
+			<isset property="lib.classpath.flatten.dir" />
+		</not>
+		<then>
+			<property name="lib.classpath.flatten.dir" value="/tmp/${ant.project.name}" />
+			<delete dir="${lib.classpath.flatten.dir}" />
+		</then>
+	</if>
+
+	<if>
+		<isset property="project.dependencies" />
+		<then>
+			<property name="project.dependencies" value="FRONTED,${project.dependencies}" />
+		</then>
+		<else>
+			<property name="project.dependencies" value="FRONTEND" />
+		</else>
+	</if>
+
+	<if>
+		<not>
+			<isset property="gen.ear" />
+		</not>
+		<then>
+			<property name="gen.ear" value="true" />
+		</then>
+	</if>
+
+	<if>
+		<not>
+			<isset property="fork.javac" />
+		</not>
+		<then>
+			<property name="fork.javac" value="no" />
+		</then>
+	</if>
+
+	<if>
+		<not>
+			<isset property="fork.javac.junit" />
+		</not>
+		<then>
+			<property name="fork.javac.junit" value="no" />
+		</then>
+	</if>
+
+	<if>
+		<not>
+			<isset property="fork.junit" />
+		</not>
+		<then>
+			<property name="fork.junit" value="true" />
+		</then>
+	</if>
+
+	<if>
+		<not>
+			<isset property="fork.mode.junit" />
+		</not>
+		<then>
+			<property name="fork.mode.junit" value="once" />
+		</then>
+	</if>
+
+
+	<property name="target.jboss.home" value="${env.JBOSS_HOME}" />
+	<property name="target.jboss.lib.dir" value="${target.jboss.home}/modules" />
+	<property name="target.jboss.deployment.dir" value="${target.jboss.home}/standalone/deployments" />
+
+
+	<!-- Configurazioni specifiche portate dal progetto -->
+	<if>
+		<isset property="env.JBOSS_VERSION_NUMBER" />
+		<then>
+			<if>
+				<available file="JBOSS_${env.JBOSS_VERSION_NUMBER}" type="dir" />
+				<then>
+					<property name="project.jboss.tree" value="JBOSS_${env.JBOSS_VERSION_NUMBER}" />
+				</then>
+				<else>
+					<property name="project.jboss.tree" value="${basedir}/JBOSS" />
+				</else>
+			</if>
+		</then>
+		<else>
+			<property name="project.jboss.tree" value="${basedir}/JBOSS" />
+		</else>
+	</if>
+
+	<if>
+		<not>
+			<isset property="project.name" />
+		</not>
+		<then>
+			<property name="project.name" value="${ant.project.name}" />
+		</then>
+	</if>
+	<property name="project.src" value="${basedir}/src" />
+	<property name="project.src.build" value="${basedir}/src.build" />
+	<property name="project.src.excludes" value="" />
+	<property name="project.src.required.from.generated" value="${basedir}/src.required.from.generated" />
+	<property name="project.src.required.from.generated.build" value="${basedir}/src.required.from.generated.build" />
+	<property name="project.src.generated" value="${basedir}/src.generated" />
+	<property name="project.src.generated.build" value="${basedir}/src.generated.build" />
+	<property name="project.schema" value="${basedir}/schemas" />
+	<property name="project.build" value="${basedir}/build" />
+	<property name="project.libs" value="${basedir}/lib" />
+	<property name="project.libs.no.deploy" value="${basedir}/lib.no.deploy" />
+	<property name="project.war.webcontent" value="${basedir}/WebContent" />
+	<property name="project.build.war.webcontent" value="${basedir}/build.webcontent" />
+
+
+	<property name="project.dist" value="${basedir}/dist" />
+	<property name="project.dist.no.deploy" value="${basedir}/dist.no.deploy" />
+	<property name="project.dist.jboss.tree" value="${project.dist}/JBOSS" />
+
+	<property name="project.archive.name" value="${project.name}.${project.type}" />
+
+	<!-- ${project.deployment.type} can be one between no_deploy, module, utility-jar and deployment  -->
+	<if>
+		<equals arg1="no_deploy" arg2="${project.deployment.type}" />
+		<then>
+			<property name="project.archive.path" value="${project.dist.no.deploy}" />
+			<property name="project.archive.lib.path" value="${project.archive.path}" />
+		</then>
+		<elseif>
+			<equals arg1="module" arg2="${project.deployment.type}" />
+			<then>
+				<propertyregex property="project.archive.name.path" input="${project.module.name}" regexp="\." replace="/" global="true" />
+				<property name="project.archive.path" value="${project.dist.jboss.tree}/modules/system/layers/base/${project.archive.name.path}/main" />
+				<property name="project.archive.lib.path" value="${project.archive.path}" />
+			</then>
+		</elseif>
+		<elseif>
+			<and>
+				<equals arg1="utility-jar" arg2="${project.deployment.type}" />
+				<istrue value="${gen.ear}" />
+			</and>
+			<then>
+				<property name="project.archive.path" value="${project.dist.jboss.tree}/standalone/deployments/lib" />
+				<property name="project.archive.lib.path" value="${project.archive.path}" />
+			</then>
+		</elseif>
+		<else>
+			<property name="project.archive.path" value="${project.dist.jboss.tree}/standalone/deployments" />
+			<property name="project.archive.lib.path" value="${project.archive.path}/lib" />
+		</else>
+	</if>
+
+
+
+	<!-- END PROPERTIES -->
+
+	<!-- 
+		PATHS: 
+		deps.classpath = jar dei progetti interni da cui il progetto corrente dipende (comprendono anche i jar presenti in lib ad eccezione di quelli sotto lib.test) e relative local lib, lib no deploy e war lib
+		lib.classpath = deps.classpath, jboss modules lib, additional jboss modules lib definite nel progetto corrente, lib terze parti definite nel progetto
+	-->
+	<fileset id="jbossModules" dir="${target.jboss.lib.dir}" erroronmissingdir="false">
+		<include name="**/*.jar" />
+		<exclude name="**/ch/qos/cal10n/**/*.jar" />
+		<!-- TODO exclusion modules -->
+	</fileset>
+
+	<fileset id="localJbossModules" dir="${project.jboss.tree}" erroronmissingdir="false">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<!-- COMPILETIME, DEPLOYED FOR RUNTIME -->
+	<fileset id="localLibs" dir="${project.libs}" erroronmissingdir="false">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<!-- COMPILETIME, NOT DEPLOYED FOR RUNTIME -->
+	<fileset id="localLibsNoDeploy" dir="${project.libs.no.deploy}" erroronmissingdir="false">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<!-- COMPILETIME, RUNTIME -->
+	<fileset id="warLibs" dir="${project.war.webcontent}/WEB-INF/lib" erroronmissingdir="false">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<path id="3dparty.classpath">
+		<fileset refid="localLibs" />
+		<fileset refid="localLibsNoDeploy" />
+		<fileset refid="warLibs" />
+	</path>
+
+
+	<path id="deps.classpath">
+		<fileset dir=".." includes="${project.dependencies.list}" />
+		<fileset dir=".." includes="${project.dependencies.list.no.deploy}" />
+		<fileset dir=".." includes="${project.dependencies.list.local.lib}" />
+		<fileset dir=".." includes="${project.dependencies.list.local.lib.no.deploy}" />
+		<fileset dir=".." includes="${project.dependencies.list.local.lib.war}" />
+	</path>
+
+	<path id="lib.classpath">
+		<path refid="deps.classpath" />
+		<path refid="3dparty.classpath" />
+		<fileset refid="localJbossModules" />
+		<fileset refid="jbossModules" />
+	</path>
+
+	<path id="lib.classpath.flatten">
+		<fileset dir="${lib.classpath.flatten.dir}" />
+	</path>
+
+	<path id="build.classpath">
+		<pathelement location="${project.build}" />
+	</path>
+
+	<!-- END PATHS -->
+
+	<!-- TARGETS -->
+	<target name="clean">
+		<delete dir="${project.build}" />
+		<delete dir="${project.src.build}" />
+		<delete dir="${project.src.required.from.generated.build}" />
+		<delete dir="${project.src.generated.build}" />
+		<delete dir="${project.dist}" />
+		<delete dir="${project.dist.no.deploy}" />
+		<delete dir="${project.src.generated}" />
+		<if>
+			<equals arg1="${project.type}" arg2="war" />
+			<then>
+				<delete dir="${project.build.war.webcontent}"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="init" depends="clean">
+		<!-- Create dirs -->
+		<mkdir dir="${project.build}" />
+		<mkdir dir="${project.src.build}" />
+		<mkdir dir="${project.src.required.from.generated.build}" />
+		<mkdir dir="${project.src.generated.build}" />
+		<mkdir dir="${project.dist}" />
+		<mkdir dir="${project.dist.no.deploy}" />
+		<mkdir dir="${project.src.generated}" />
+		<if>
+			<equals arg1="${project.type}" arg2="war" />
+			<then>
+				<mkdir dir="${project.build.war.webcontent}"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<available file="${lib.classpath.flatten.dir}" type="dir" />
+			</not>
+			<then>
+				<mkdir dir="${lib.classpath.flatten.dir}" />
+			</then>
+		</if>
+
+		<!-- Add lib.classpath to lib.classpath.flatten.dir -->
+		<copy todir="${lib.classpath.flatten.dir}" flatten="true">
+			<path refid="lib.classpath" />
+		</copy>
+	</target>
+
+	<!-- Target vuoto da overridare nel caso sia necessario generare a runtime sorgenti -->
+	<target name="produce.src.generated" />
+
+	<target name="build" depends="init">
+		<!-- LOG -->
+		<echo message="==================================" />
+		<echo message="BUILDING PROJECT ${ant.project.name}" />
+		<echo message="  Deployment-Type: ${project.deployment.type}" />
+		<if>
+			<equals arg1="module" arg2="${project.deployment.type}" />
+			<then>
+				<echo message="  Module-Name: ${project.module.name}" />
+			</then>
+		</if>
+		<echo message="  Archive-Type: ${project.type}" />
+		<echo message="  Archive-Name: ${project.archive.name}" />
+		<echo message="JBOSS_HOME = ${env.JBOSS_HOME}" />
+		<echo message="JAVA_HOME = ${env.JAVA_HOME}" />
+		<echo message="==================================" />
+		<!-- END LOG -->
+
+		<javac fork="${fork.javac}" srcdir="${project.src}" excludes="${project.src.excludes}" destdir="${project.src.build}" debug="true" debuglevel="lines,vars,source" encoding="iso8859-1" includeAntRuntime="false">
+			<classpath refid="lib.classpath.flatten" />
+			<classpath refid="build.classpath" />
+			<compilerarg value="-XDignore.symbol.file" />
+		</javac>
+		<copy todir="${project.build}" overwrite="true">
+			<fileset dir="${project.src.build}" excludes="**/*.java,**/.*ignore" />
+			<fileset dir="${project.src}" excludes="**/*.java,**/.*ignore" />
+		</copy>
+	</target>
+
+	<!-- Target vuoto da overridare nel caso sia necessario fare qualcosa dopo la fase di build -->
+	<target name="post.build" />
+
+	<target name="archive" depends="build,post.build">
+		<condition property="needxml">
+			<available file="${project.war.webcontent}/WEB-INF/web.xml" />
+		</condition>
+		<switch value="${project.type}">
+			<case value="war">
+				<property name="project.jar.name" value="${project.name}.jar" />
+				<jar destfile="${project.archive.path}/${project.jar.name}">
+					<fileset dir="${project.build}" />
+				</jar>
+				<war destfile="${project.archive.path}/${project.archive.name}" basedir="${project.war.webcontent}" needxmlfile="${needxml}" manifest="${project.war.webcontent}/META-INF/MANIFEST.MF">
+					<lib file="${project.archive.path}/${project.jar.name}" />
+					<fileset dir="${project.build.war.webcontent}" />
+				</war>
+				<delete file="${project.archive.path}/${project.jar.name}" />
+			</case>
+			<default>
+				<jar destfile="${project.archive.path}/${project.archive.name}" manifest="${project.src}/META-INF/MANIFEST.MF">
+					<fileset dir="${project.build}" />
+				</jar>
+			</default>
+		</switch>
+	</target>
+
+	<!-- Target vuoto da overridare nel caso sia necessario fare qualcosa dopo la fase di archive -->
+	<target name="post.archive" />
+
+	<target name="common.makeproject.dist" depends="archive,post.archive">
+		<!-- Copy local JBOSS directories to dist -->
+		<if>
+			<available file="${project.jboss.tree}" type="dir" />
+			<then>
+				<copy todir="${project.dist.jboss.tree}" overwrite="true">
+					<fileset dir="${project.jboss.tree}" />
+				</copy>
+				<if>
+					<and>
+						<not>
+							<isset property="build.production.environment" />
+						</not>
+						<available file="JBOSS_DEV" type="dir" />
+					</and>
+					<then>
+						<copy todir="${project.dist.jboss.tree}" overwrite="true">
+							<fileset dir="JBOSS_DEV" />
+						</copy>
+					</then>
+				</if>
+				<chmod perm="755">
+					<fileset dir="${project.dist.jboss.tree}" includes="*.sh" />
+				</chmod>
+				<copy todir="${project.dist.jboss.tree}/standalone/deployments/lib" overwrite="true">
+					<fileset dir="lib" />
+				</copy>
+			</then>
+		</if>
+
+		<switch value="${project.type}">
+			<case value="jar">
+				<copy todir="${project.archive.lib.path}" overwrite="true">
+					<fileset refid="localLibs" />
+				</copy>
+			</case>
+			<case value="module">
+				<copy todir="${project.archive.lib.path}" overwrite="true">
+					<fileset refid="localLibs" />
+				</copy>
+			</case>
+			<default />
+		</switch>
+	</target>
+
+	<!-- Target vuoto da overridare nel caso sia necessario fare qualcosa dopo la fase di common.makeproject.dist -->
+	<target name="specific.makeproject.dist" />
+
+	<target name="makeproject.dist" depends="common.makeproject.dist,specific.makeproject.dist" />
+
+	<target name="publish" depends="makeproject.dist">
+		<if>
+			<available file="${project.dist.jboss.tree}" type="dir" />
+			<then>
+				<if>
+					<and>
+						<istrue value="${gen.ear}" />
+						<not>
+							<equals arg1="module" arg2="${project.deployment.type}" />
+						</not>
+					</and>
+					<then>
+						<dirset id="ear.artifact" dir="${target.jboss.deployment.dir}" includes="*.ear" />
+						<pathconvert property="ear.dir" refid="ear.artifact" />
+
+						<if>
+							<and>
+								<isset property="ear.dir" />
+								<not>
+									<equals arg1="${ear.dir}" arg2="" />
+								</not>
+							</and>
+							<then>
+								<!-- Publish all excluding files updating EAR -->
+								<copy todir="${target.jboss.home}" overwrite="true">
+									<fileset dir="${project.dist.jboss.tree}">
+										<exclude name="**/deployments/**" />
+									</fileset>
+								</copy>
+								<chmod perm="755">
+									<fileset dir="${project.dist.jboss.tree}" includes="*.sh" />
+								</chmod>
+
+								<!-- Update unzipped EAR -->
+								<echo message="Updating unzipped EAR: ${ear.dir}" />
+								<touch file="${ear.dir}.skipdeploy" />
+								<copy todir="${ear.dir}" overwrite="true">
+									<fileset dir="${project.dist.jboss.tree}/standalone/deployments" includes="**" />
+								</copy>
+								<delete file="${ear.dir}.skipdeploy" />
+							</then>
+							<else>
+								<fail message="No EAR file to update" />
+							</else>
+						</if>
+					</then>
+					<else>
+						<copy todir="${target.jboss.home}" overwrite="true">
+							<fileset dir="${project.dist.jboss.tree}" />
+						</copy>
+					</else>
+				</if>
+			</then>
+		</if>
+
+		<tstamp>
+			<format property="TSTAMP" pattern="dd-MM-yyyy HH:mm:ss" locale="it,IT" />
+		</tstamp>
+		<echo message="${ant.project.name} BUILD AND PUBLISH COMPLETED at ${TSTAMP}" />
+	</target>
+
+
+	
+	<!-- END TARGETS -->
+
+</project>

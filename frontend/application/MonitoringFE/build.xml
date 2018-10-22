@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="MonitoringFE" default="makeproject.dist" basedir=".">
+
+	<property name="project.deployment.type" value="deployment" />
+	<property name="project.type" value="war" />
+
+	<import file="${basedir}/build-template.xml" />
+
+</project>

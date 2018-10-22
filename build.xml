@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="MONITORING" default="targetMon" basedir=".">
+	<import file="build-tasks.xml" />
+	
+	<property environment="env" />
+	<property name="prod.root" value="./target" />
+	<property name="prod.root.tar" value="${prod.root}/tar" />
+	<property name="prod.root.release" value="${prod.root}/release" />
+	<property name="prod.prometheus" value="${prod.root.release}/prometheus" />
+	<property name="prod.frontend" value="${prod.root.release}/frontend" />
+	<property name="prod.exporters" value="${prod.root.release}/exporters" />
+	<property name="prod.grafana" value="${prod.root.release}/grafana" />
+	<property name="source.root" value="${basedir}" />
+	<property name="source.prometheus" value="${source.root}/backend/prometheus" />
+	<property name="source.frontend" value="${source.root}/frontend/application/MonitoringFE" />
+	<property name="source.grafana" value="${source.root}/visualization/grafana" />
+	<property name="source.central" value="${source.root}/central" />
+	<property name="plugin.piechart" value="grafana-piechart-panel-ce2ede8" />
+	<property name="plugin.briandatatable" value="briangann-grafana-datatable-panel-6b0ab7b" />
+	<property name="build.to.launch" value="${source.frontend}/build-monitoring-fe.xml" />
+	<property name="lib.classpath.flatten.dir" value="/tmp/FRONTEND" />
+	
+	
+
+	<target name="cleanMon">
+		<delete dir="${prod.root}"/>	
+	</target>
+	
+	<target name="buildMon">
+	<property file="${basedir}/conf/build/env.build.properties"/>
+			
+			<ant antfile="${build.to.launch}" inheritAll="false">
+					<property name="lib.classpath.flatten.dir" value="${lib.classpath.flatten.dir}" />
+				    <property name="basedir" value="${source.frontend}" />
+					<property name="env.JBOSS_HOME" value="${JBOSS_HOME}" />
+					<property name="env.JAVA_HOME" value="${JAVA_HOME}" />
+			</ant>
+	</target>
+
+	<target name="initMon" depends="cleanMon,buildMon">
+		<mkdir dir="${prod.root}" />
+		<mkdir dir="${prod.root.tar}" />
+		<mkdir dir="${prod.root.release}" />
+		<mkdir dir="${prod.prometheus}" />
+		<mkdir dir="${prod.exporters}" />
+		<mkdir dir="${prod.grafana}" />
+		<mkdir dir="${prod.frontend}" />
+		<mkdir dir="${prod.grafana}/plugins" />
+		<mkdir dir="${prod.grafana}/dashboards" />
+		<mkdir dir="${prod.grafana}/provisioning" />
+		<mkdir dir="${prod.grafana}/provisioning/dashboards" />
+		<mkdir dir="${prod.grafana}/provisioning/datasources" />
+		<mkdir dir="${prod.frontend}/bin" />
+		<mkdir dir="${prod.frontend}/conf" />
+		<mkdir dir="${prod.frontend}/deployments" />
+	</target>
+	
+	<target name="prepareMon" depends="initMon">
+		
+		<copy todir="${prod.grafana}/dashboards" overwrite="true">
+			<fileset dir="${source.grafana}/dashboards"/>
+		</copy>
+		<copy todir="${prod.grafana}/provisioning/dashboards" overwrite="true">
+					<fileset dir="${source.grafana}/provisioning/dashboards"/>
+		</copy>	
+		<copy todir="${prod.grafana}/provisioning/datasources" overwrite="true">
+			 	<fileset dir="${source.grafana}/provisioning/datasources"/>
+		</copy>
+		<copy todir="${prod.grafana}/plugins" overwrite="true">
+				<fileset dir="${source.grafana}/plugins"/>
+		</copy>
+		
+		<unzip src="${prod.grafana}/plugins/${plugin.piechart}.zip" dest="${prod.grafana}/plugins">
+		</unzip>
+		<unzip src="${prod.grafana}/plugins/${plugin.briandatatable}.zip" dest="${prod.grafana}/plugins">
+		</unzip>
+		
+		<delete file="${prod.grafana}/plugins/${plugin.piechart}.zip" />
+		<delete file="${prod.grafana}/plugins/${plugin.briandatatable}.zip" />
+		<copy todir="${prod.grafana}" overwrite="true">
+				<fileset dir="${source.grafana}/conf"/>
+		</copy>
+		
+		<copy todir="${prod.prometheus}" overwrite="true">
+				<fileset dir="${source.prometheus}/conf"/>
+		</copy>
+		
+		<copy todir="${prod.exporters}" overwrite="true">
+						<fileset dir="${source.prometheus}/exporters"/>
+		</copy>
+		
+		<copy todir="${prod.frontend}/bin" overwrite="true">
+				<fileset dir="${source.frontend}/script"/>
+		</copy>
+		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/standalone.xml" tofile="${prod.frontend}/conf/standalone-mon.xml" overwrite="true" />
+		<copy todir="${prod.frontend}/deployments" overwrite="true">
+								<fileset dir="${source.frontend}/dist/JBOSS/standalone/deployments"/>
+		</copy>
+
+		
+		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml" overwrite="true" />
+		<copy file="${source.central}/install.sh" tofile="${prod.root.release}/install.sh" overwrite="true" />
+		<chmod file="${prod.root.release}/**" perm="777" type="both"/>
+	</target>
+	
+	
+	<target name="targetMon" depends="prepareMon">
+		
+
+		
+		
+		<tstamp>
+			<format property="BP_TSTAMP" pattern="dd-MM-yyyy" locale="it,IT" />
+		</tstamp>
+		<echo message="TARGET COMPLETED at ${BP_TSTAMP}" />
+		
+		<exec executable="tar">
+					<arg value="-cvz" />
+					<arg value="--file=${prod.root.tar}/MONITORING-${BP_TSTAMP}.tgz" />
+					<arg value="--directory=${prod.root.release}" />
+					<arg value="." />
+		</exec>
+		
+
+	</target> 
+
+</project>

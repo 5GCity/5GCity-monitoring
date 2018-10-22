@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<!-- HIBERNATE -->
+	<persistence-unit name="MONITORING-DB" transaction-type="JTA">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<jta-data-source>java:jboss/datasources/H2DS</jta-data-source>
+<!--		<class>com.italtel.monitoring.fe.entity.InventoryNode</class>
+		<class>com.italtel.monitoring.fe.entity.InventoryMetric</class>
+		<class>com.italtel.monitoring.fe.entity.InventoryService</class>
+		-->
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.cache.use_second_level_cache" value="false" />
+			<property name="hibernate.cache.use_query_cache" value="false" />
+     	</properties>
+	</persistence-unit>
+
+	<!-- ECLIPSE LINK -->
+	<!-- <persistence-unit name="NM-S-OM-DB" transaction-type="JTA"> -->
+	<!-- <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> -->
+	<!-- <jta-data-source>java:jboss/datasources/H2DS</jta-data-source> -->
+	<!-- <class>com.italtel.nm.om.fault.entity.Alarm</class> -->
+	<!-- <exclude-unlisted-classes>false</exclude-unlisted-classes> -->
+	<!-- <properties> -->
+	<!-- <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" /> -->
+	<!-- <property name="eclipselink.ddl-generation" value="create-or-extend-tables" /> -->
+	<!-- <property name="eclipselink.ddl-generation.output-mode" value="database" /> -->
+	<!-- </properties> -->
+	<!-- </persistence-unit> -->
+</persistence>
