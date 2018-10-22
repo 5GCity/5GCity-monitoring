@@ -1,0 +1,7 @@
+
+  - job_name: '__SERVICE__'
+    scrape_interval: '__INTERVAL__s'
+    file_sd_configs:
+      - files:
+         - '/etc/prometheus/__SERVICE__.json'
+

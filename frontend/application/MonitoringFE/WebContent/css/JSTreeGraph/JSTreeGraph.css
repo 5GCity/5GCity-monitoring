@@ -1,0 +1,43 @@
+﻿.NodeContent
+{
+	font-family:Verdana;
+	font-size:small;
+	text-overflow: ellipsis;
+}
+
+.Node a, .NodeHover a {
+	color:inherit;
+}
+
+.Node, .NodeHover 
+{
+	position:absolute;
+	background-color: #CCDAFF;
+	/* border: 1px solid #5280FF; */
+	text-align:center;
+	vertical-align:middle;
+	cursor:pointer;
+	overflow:hidden;
+	font-family:Verdana;
+	font-size:small;
+	text-overflow: ellipsis;	
+}
+
+.NodeCollapsed
+{
+	position:absolute;
+	background-color: #8FADFF;
+	border: 2px solid black;
+	text-align:center;
+	vertical-align:middle;
+	cursor:pointer;
+	overflow:hidden;
+}
+
+
+.NodeLine
+{
+	background-color: #000066;
+	position:absolute;
+	overflow:hidden;
+}
