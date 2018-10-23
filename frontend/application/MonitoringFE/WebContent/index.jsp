@@ -37,7 +37,7 @@
 	<script src="jslib/jquery-1.11.3.min.js"></script>
 	<script >
        $(document).ready(function() {	  		
-				var strName = 'http://' + window.location.hostname + ':33000/dashboard/db/summarynode?refresh=1h&orgId=1';
+				var strName = 'http://' + window.location.hostname + ':3000/dashboard/db/summarynode?refresh=1h&orgId=1';
 				 $('#main-div').find('#myIframe').attr('src',strName);
        });
     </script>
