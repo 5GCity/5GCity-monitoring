@@ -5,19 +5,19 @@ services:
     image: prom/prometheus:v2.3.2
     volumes:
       - ./prometheus:/etc/prometheus/
-      - prometheus_data:/prometheus
+      - promdata:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
       - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention=5d'
+      - '--storage.tsdb.retention=1d'
     ports:
-      - 39090:9090
+      - 9090:9090
 
   volGrafana:
     image: grafana/grafana:5.2.4
     ports:
-      - 33000:3000
+      - 3000:3000
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/plugins/:/var/lib/grafana/plugins/
@@ -27,7 +27,7 @@ services:
 
   volFrontend:
     environment:
-      - HOST_MON=138.132.116.146
+      - HOST_MON=__HOST_MON__
     image: jboss/wildfly:14.0.1.Final
     volumes:
       - ./frontend/deployments:/opt/jboss/wildfly/standalone/deployments
@@ -36,11 +36,11 @@ services:
       - ./frontend/database/:/monitoring
       - ./prometheus:/etc/prometheus/
     ports:
-      - 38080:8080
+      - 8080:8080
     command: /opt/jboss/wildfly/bin/standalone.sh -c=../conf/standalone-mon.xml -b 0.0.0.0
 
 volumes:
-    prometheus_data: {}
+    promdata: {}
     frontend:
     prometheus:
     grafana:
