@@ -44,7 +44,7 @@ done
 
 cp $FILE_PROMETHEUS $DIR_PROMETHEUS/prometheus.yml
 if [ "$doRestart" == "restart" ]; then
-curl -k -X POST -H "Content-Type: application/json" -d "" http://$HOST_MON:9090/-/reload
+curl -k -X POST -H "Content-Type: application/json" -d "" http://$HOST_MON:$PM_PORT_MON/-/reload
 fi
 exit 0
 

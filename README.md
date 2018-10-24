@@ -8,6 +8,12 @@ Monitoring manager module for
 5GCity distributed cloud and radio platform.
 
 
+The Monitoring manager module is composed by three main submodules:
+- a java Frontend application - Monitoring WebGui -
+- a customized Prometheus tool
+- a customized Grafana Tool
+
+
 ## Development
 
 To contribute to the development of the 5GCity monitoring manager,
@@ -60,13 +66,15 @@ c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/t
 
 ##### Dependencies
 
-Linux node exporter  installed and run on target node and on each node that must be monitored
+Linux node exporter installed and run on target node 
 
 - _cd `<pathRun>`_
-- _wget https://github.com/prometheus/node_exporter/releases/download/v*/node_exporter-\*\.\*-amd64\.tar\.gz_
+- _cp `<pathBuild>`/5GCity-monitoring/backend/prometheus/exporters/node_exporter-0\.16\.0\.linux-amd64\.tar\.gz \._
 - _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
 - _cd node_exporter-\*\.\*-amd64_
 - _./node_exporter &_
+
+NOTE:  Linux node exporter must be installed and running also on each node that must be monitored (you can also get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_)
 
 ##### Deployment Setup
 
@@ -78,11 +86,15 @@ a. Untar file _MONITORING-`<DATE>`.tar_ generated in Build phase in a new direct
 - _cd mon_
 - _tar xvfz `<pathBuild>`/5GCity-monitoring/target/tar/MONITORING-`<DATE>`.tar_
 	
-b. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
+b. (Optional) The file _`<pathRun>`/config\.properties_ contains the default values for the ports used to run grafana(33000), prometheus(39090) and frontend application(38080)
+
+If you want to use ports'values different from default, please edit this file before to proceed with step c.
+
+c. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
 	
 - _./install.sh `<IPAddressTarget>`_
 	
-c. Run command  docker-compose up  in background
+d. Run command  docker-compose up  in background
 
 - _docker-compose up -d_
 
@@ -90,10 +102,12 @@ c. Run command  docker-compose up  in background
 ## Usage
 
 Once the Monitoring manager is running, please open in your browser the Monitoring WebGui from
-_http://`<IPAddressTarget>`:8080/FrontEnd_
+_http://`<IPAddressTarget>`:`<FrontEndPort>`/FrontEnd_
+(for example ->  http://138.132.116.146:38080/FrontEnd)
 
-From Dashboard you will connect to Grafana Tool by user admin/monitoring:  you can see SummaryNODE dashboard for the node 
+From Dashboard you will connect to Grafana Tool by user admin/monitoring, using `<GrafanaPort>`:  you can see SummaryNODE dashboard for the node 
 _`<IPAddressTarget>`_
+
 You can add more inventory services and their relative inventory nodes / inventory metrics from the Monitoring WebGUI application.
 
 

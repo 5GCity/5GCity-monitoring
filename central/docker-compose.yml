@@ -12,12 +12,12 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention=1d'
     ports:
-      - 9090:9090
+      - __PM_PORT_MON__:9090
 
   volGrafana:
     image: grafana/grafana:5.2.4
     ports:
-      - 3000:3000
+      - __GF_PORT_MON__:3000
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/plugins/:/var/lib/grafana/plugins/
@@ -28,6 +28,8 @@ services:
   volFrontend:
     environment:
       - HOST_MON=__HOST_MON__
+      - GF_PORT_MON=__GF_PORT_MON__
+      - PM_PORT_MON=__PM_PORT_MON__
     image: jboss/wildfly:14.0.1.Final
     volumes:
       - ./frontend/deployments:/opt/jboss/wildfly/standalone/deployments
@@ -36,7 +38,7 @@ services:
       - ./frontend/database/:/monitoring
       - ./prometheus:/etc/prometheus/
     ports:
-      - 8080:8080
+      - __FE_PORT_MON__:8080
     command: /opt/jboss/wildfly/bin/standalone.sh -c=../conf/standalone-mon.xml -b 0.0.0.0
 
 volumes:

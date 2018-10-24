@@ -3,7 +3,7 @@ datasources:
   type: 'prometheus'
   access: 'proxy'
   org_id: 1
-  url: 'http://__HOST_MON__:9090'
+  url: 'http://__HOST_MON__:__PM_PORT_MON__'
   is_default: true
   version: 1
   editable: true
