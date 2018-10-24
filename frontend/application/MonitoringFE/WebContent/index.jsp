@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html>
+
+<%@ page import="com.italtel.monitoring.fe.utils.OSUtils"%>
+<%
+    String portGrafana = OSUtils.getGrafanaPort();
+%>
+
 <head>
 <title>Monitoring</title>
 <meta name="description" content="Monitoring">
@@ -36,8 +42,8 @@
 	<jsp:include page="include/scripts.jsp" />
 	<script src="jslib/jquery-1.11.3.min.js"></script>
 	<script >
-       $(document).ready(function() {	  		
-				var strName = 'http://' + window.location.hostname + ':3000/dashboard/db/summarynode?refresh=1h&orgId=1';
+       $(document).ready(function() {
+				var strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> +'/dashboard/db/summarynode?refresh=1h&orgId=1';
 				 $('#main-div').find('#myIframe').attr('src',strName);
        });
     </script>

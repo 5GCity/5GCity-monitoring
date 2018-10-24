@@ -9,12 +9,18 @@ then echo "Missing Ip Address"
 exit 1
 fi
 
+source config.properties
+
 HOST_MON=$1
 echo $HOST_MON >> $LOGFILE
 
 sed -i s/__HOST_MON__/$HOST_MON/g prometheus/prometheus.yml.base
 sed -i s/__HOST_MON__/$HOST_MON/g grafana/provisioning/datasources/all.yml
+sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__HOST_MON__/$HOST_MON/g docker-compose.yml
+sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g docker-compose.yml
+sed -i s/__FE_PORT_MON__/$FE_PORT_MON/g docker-compose.yml
+sed -i s/__GF_PORT_MON__/$GF_PORT_MON/g docker-compose.yml
 			
 if [ ! -d ./frontend/database ]; then
   echo "not exist database" >> $LOGFILE

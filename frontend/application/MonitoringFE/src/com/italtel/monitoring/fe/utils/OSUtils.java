@@ -3,6 +3,7 @@ package com.italtel.monitoring.fe.utils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,4 +141,16 @@ public class OSUtils {
 			}
 		}
 	}
+	
+	public static String getGrafanaPort() {
+	  String grPort=null;
+	  grPort = System.getenv("GF_PORT_MON");
+	
+	  if(grPort == null)
+		 grPort = "3000";
+
+	  log.debug("grPort " + grPort);
+      return grPort;
+	}
+
 }
