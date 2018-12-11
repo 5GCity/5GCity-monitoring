@@ -97,6 +97,9 @@
 								<fileset dir="${source.frontend}/dist/JBOSS/standalone/deployments"/>
 		</copy>
 
+		<copy file="${source.prometheus}/conf/prometheus.yml.base" tofile="${prod.prometheus}/prometheus.yml.base.orig" overwrite="true" />
+		<copy file="${source.grafana}/provisioning/datasources/all.yml" tofile="${prod.grafana}/provisioning/datasources/all.yml.orig" overwrite="true" />
+		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml.orig" overwrite="true" />
 		
 		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml" overwrite="true" />
 		<copy file="${source.central}/install.sh" tofile="${prod.root.release}/install.sh" overwrite="true" />
@@ -122,6 +125,7 @@
 					<arg value="." />
 		</exec>
 		
+		<echo message="TAR COMPLETED at ${BP_TSTAMP}" />
 
 	</target> 
 

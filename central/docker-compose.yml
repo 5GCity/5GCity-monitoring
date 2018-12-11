@@ -1,11 +1,11 @@
 version: '3'
 services:
 
-  volPrometheus:
+  5GPrometheus:
     image: prom/prometheus:v2.3.2
     volumes:
       - ./prometheus:/etc/prometheus/
-      - promdata:/prometheus
+      - 5Gpromdata:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
@@ -14,7 +14,7 @@ services:
     ports:
       - __PM_PORT_MON__:9090
 
-  volGrafana:
+  5GGrafana:
     image: grafana/grafana:5.2.4
     ports:
       - __GF_PORT_MON__:3000
@@ -25,7 +25,7 @@ services:
     env_file:
       - ./grafana/config.monitoring
 
-  volFrontend:
+  5GFrontend:
     environment:
       - HOST_MON=__HOST_MON__
       - GF_PORT_MON=__GF_PORT_MON__
@@ -42,7 +42,7 @@ services:
     command: /opt/jboss/wildfly/bin/standalone.sh -c=../conf/standalone-mon.xml -b 0.0.0.0
 
 volumes:
-    promdata: {}
-    frontend:
-    prometheus:
-    grafana:
+    5Gpromdata: {}
+    5Gfrontend:
+    5Gprometheus:
+    5Ggrafana:

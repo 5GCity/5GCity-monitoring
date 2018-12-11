@@ -7,7 +7,7 @@
 </style>
 </head>
 <body
-	class="skin-blue sidebar-mini <c:out value="${sessionScope.collapseClass}"/>">
+	class='skin-blue sidebar-mini <c:out value="${sessionScope.collapseClass}"/>'>
 	<jsp:include page="include/top-nav.jsp" />
 	<div class="wrapper">
 		<aside class="main-sidebar">

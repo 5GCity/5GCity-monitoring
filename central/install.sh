@@ -14,6 +14,10 @@ source config.properties
 HOST_MON=$1
 echo $HOST_MON >> $LOGFILE
 
+cp ./prometheus/prometheus.yml.base.orig ./prometheus/prometheus.yml.base
+cp ./grafana/provisioning/datasources/all.yml.orig ./grafana/provisioning/datasources/all.yml
+cp ./docker-compose.yml.orig ./docker-compose.yml
+
 sed -i s/__HOST_MON__/$HOST_MON/g prometheus/prometheus.yml.base
 sed -i s/__HOST_MON__/$HOST_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g grafana/provisioning/datasources/all.yml

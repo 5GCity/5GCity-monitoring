@@ -1,3 +1,9 @@
+var metricEnumTypes = [ {
+	'value' : 'NODE',
+	'label' : 'NODE',
+	'type' : 'DEFAULT'
+}];
+
 $.Metric = {
 	
 	listPageLink : 'configuration.jsp?operation=list&object=inventoryMetric',
@@ -78,9 +84,10 @@ $.Metric = {
 
 		content += '<div class="col-md-4">';
 		var boxgeneral = '';
-		boxgeneral += '<div class="form-group data-input-l1" ' + display
-				+ '><label>Name</label>';
-		boxgeneral += inputText('name', inventoryMetric.name);
+		
+		boxgeneral += '<div id="metric-name" class="form-group data-input-l1"><label>Name</label>';
+		boxgeneral += dynamicSelect('name',inventoryMetric.name,
+				metricEnumTypes);
 		boxgeneral += '</div>';
 		boxgeneral += '<div class="form-group data-input-l1" ><label>Description</label>';
 		boxgeneral += inputText('desc', inventoryMetric.desc);
