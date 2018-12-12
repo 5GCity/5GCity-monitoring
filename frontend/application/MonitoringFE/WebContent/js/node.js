@@ -45,7 +45,7 @@ $.Node = {
 		confirmDeleteButton('#nav-toolbar', obj.name,
 					$.Node.actionRemove);
 		
-		setPageTitle('Inventory Nodes: '+ obj.name);
+		setPageTitle('Nodes: '+ obj.name);
 		setActiveMenu('menu_Node');
 
 		$.Node.displayFormData(obj, targetDom, true, true);
@@ -123,7 +123,7 @@ $.Node = {
 
 		createButton('inventoryNode', '#nav-toolbar');
 		
-		setPageTitle('Inventory Nodes');
+		setPageTitle('Nodes');
 		setActiveMenu('menu_node');
 
 		var boxcontent = '';
@@ -182,7 +182,7 @@ $.Node.WS = {
 	create : function(inputData, successHandler, errorHandler, targetDom) {
 		console.log("Sono qui WS!");
 		errorHandler = errorHandler || null;
-		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode',
+		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
 				inputData, successHandler, errorHandler, targetDom,
 				'modal-body');
 	},
@@ -191,25 +191,25 @@ $.Node.WS = {
 		console.log("Sono in list!");
 		errorHandler = errorHandler || null;
 		
-		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode',
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
 				successHandler, errorHandler, targetDom);
 	},
 
 	remove : function(name, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode/'
+		deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node/'
 				+ name, successHandler, errorHandler, targetDom, 'modal-body');
 	},
 
 	read : function(name, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode/' + name,
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node/' + name,
 				successHandler, errorHandler, targetDom);
 	},
 
 	template : function(successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode/template',
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node/template',
 				successHandler, errorHandler, targetDom);
 	},
 

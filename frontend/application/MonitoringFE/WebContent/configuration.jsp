@@ -89,13 +89,13 @@
 
 				var resources = [ {
 					name : 'inventoryNode',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode'
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
 				}, {
 					name : 'inventoryMetric',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric'
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/metric'
 				}, {
 					name : 'inventoryService',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService'
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/service'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
 					if (operation == 'read') {
@@ -111,7 +111,7 @@
 			} else 	if ((objectType == 'inventoryNode') || (objectType == 'Node')){
 				var resources = [ {
 					name : 'inventoryNode',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryNode'
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
 					if (operation == 'read') {
@@ -125,7 +125,7 @@
 			} else if ((objectType == 'inventoryMetric') || (objectType == 'Metric')) {
 				var resources = [{
 					name : 'inventoryMetric',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric'
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/metric'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
 					if (operation == 'read') {

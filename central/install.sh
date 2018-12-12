@@ -9,6 +9,11 @@ then echo "Missing Ip Address"
 exit 1
 fi
 
+if [ ! -e ./config.properties ]; then
+echo "Missing file config.properties"
+exit 1
+fi
+
 source config.properties
 
 HOST_MON=$1

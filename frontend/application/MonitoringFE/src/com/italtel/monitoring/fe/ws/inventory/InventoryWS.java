@@ -31,10 +31,10 @@ public class InventoryWS implements InventoryWSInterface {
 	private final static Logger log = LoggerFactory
 			.getLogger(CommonConfService.class);
 
-	@Override
-	public String test() {
-		return "OK";
-	}
+//	@Override
+//	public String test() {
+//		return "OK";
+//	}
 
 	/********************
 	 * InventoryService *
@@ -81,6 +81,10 @@ public class InventoryWS implements InventoryWSInterface {
 		try {
 			// Read
 			InventoryService inventoryService = getSingleService(name);
+			if (inventoryService == null) {
+				throw new Exception("service " + name
+						+ " not exists");
+			}
 			// Success result
 			result = new Result<InventoryService>();
 			result.setCode(Result.OK_SUCCESS_CODE);
@@ -251,6 +255,10 @@ public class InventoryWS implements InventoryWSInterface {
 		try {
 			// get
 			InventoryNode inventoryNode = getSingleNode(name);
+			if (inventoryNode == null) {
+				throw new Exception("node " + name
+						+ " not exists");
+			}
 			// Success result
 			result = new Result<InventoryNode>();
 			result.setCode(Result.OK_SUCCESS_CODE);
@@ -387,6 +395,10 @@ public class InventoryWS implements InventoryWSInterface {
 		try {
 			// get
 			InventoryMetric inventoryMetric = getSingleMetric(name);
+			if (inventoryMetric == null) {
+				throw new Exception("metric " + name
+						+ " not exists");
+			}
 			// Success result
 			result = new Result<InventoryMetric>();
 			result.setCode(Result.OK_SUCCESS_CODE);

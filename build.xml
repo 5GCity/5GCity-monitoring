@@ -103,7 +103,7 @@
 		
 		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml" overwrite="true" />
 		<copy file="${source.central}/install.sh" tofile="${prod.root.release}/install.sh" overwrite="true" />
-		<copy file="${source.central}/config.properties" tofile="${prod.root.release}/config.properties" overwrite="true" />
+		<copy file="${source.central}/config.properties.sample" tofile="${prod.root.release}/config.properties.sample" overwrite="true" />
 		<chmod file="${prod.root.release}/**" perm="777" type="both"/>
 	</target>
 	
