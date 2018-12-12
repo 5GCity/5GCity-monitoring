@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+  5GPrometheus:
+    image: prom/prometheus:v2.3.2
+    volumes:
+      - ./prometheus:/etc/prometheus/
+      - 5Gpromdata:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+    ports:
+      - __PM_PORT_MON__:9090
+
+  5GGrafana:
+    image: grafana/grafana:5.2.4
+    ports:
+      - __GF_PORT_MON__:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/plugins/:/var/lib/grafana/plugins/
+      - ./grafana/dashboards/:/var/lib/grafana/dashboards
+    env_file:
+      - ./grafana/config.monitoring
+
+  5GFrontend:
+    environment:
+      - HOST_MON=__HOST_MON__
+      - GF_PORT_MON=__GF_PORT_MON__
+      - PM_PORT_MON=__PM_PORT_MON__
+    image: jboss/wildfly:14.0.1.Final
+    volumes:
+      - ./frontend/deployments:/opt/jboss/wildfly/standalone/deployments
+      - ./frontend/conf/:/opt/jboss/wildfly/standalone/conf
+      - ./frontend/bin/:/opt/jboss/bin
+      - ./frontend/database/:/monitoring
+      - ./prometheus:/etc/prometheus/
+    ports:
+      - __FE_PORT_MON__:8080
+    command: /opt/jboss/wildfly/bin/standalone.sh -c=../conf/standalone-mon.xml -b 0.0.0.0
+
+volumes:
+    5Gpromdata: {}
+    5Gfrontend:
+    5Gprometheus:
+    5Ggrafana:

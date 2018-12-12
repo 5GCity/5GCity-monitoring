@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="MonitoringFE" default="publish" basedir=".">
+
+	<property name="nm-om.product.name" value="FRONTEND" />
+	<property name="nm-om.title" value="Monitoring Front End" />
+	<property name="nm-om.version" value="1.0.0" />
+	<property name="nm-om.prj.list" value="MonitoringFE" />
+
+		<property name="lib.classpath.flatten.dir" value="/tmp/${nm-om.product.name}" />
+
+		<property name="conf.dir" value="${nm-om.product.name}/conf" />
+		<property name="conf.build" value="${conf.dir}/build" />
+
+		<import file="build-tasks-fe.xml" />
+
+		<property environment="env" />
+
+		<property name="failure.missing.pre" value="[FATAL]: Missing prerequisites" />
+		<property name="failure.missing.nmproductname" value=" - nm-om.product.name is not set" />
+		<property name="failure.missing.nmtitle" value=" - nm-om.title is not set" />
+		<property name="failure.missing.nmversion" value=" - nm-om.version is not set" />
+		<property name="failure.missing.nmprjlist" value=" - nm-om.prj.list is not set" />
+		<property name="failure.missing.rootjbosstree" value=" - root.jboss.tree is not set" />
+		<property name="failure.missing.rootjbossprojecttree" value=" - root.jboss.project.tree is not set" />
+		<property name="failure.missing.jbosszip" value=" - env.JBOSS_ZIP is not set" />
+		<property name="failure.missing.jbossversion" value=" - env.JBOSS_VERSION is not set" />
+		<property name="failure.missing.javazip" value=" - env.JAVA_ZIP is not set" />
+		<property name="failure.missing.jbosshome" value=" - env.JBOSS_HOME is not set" />
+		<property name="failure.missing.modulesdir" value=" - Directory ${env.JBOSS_HOME}/modules.orig does not exist" />
+		<property name="failure.missing.standalonedir" value=" - Directory ${env.JBOSS_HOME}/standalone.orig does not exist" />
+		<property name="failure.missing.domaindir" value=" - Directory ${env.JBOSS_HOME}/domain.orig does not exist" />
+
+		<if>
+			<not>
+				<isset property="ear.name" />
+			</not>
+			<then>
+				<property name="ear.name" value="${nm-om.product.name}.ear" />
+			</then>
+		</if>
+
+		<property name="dist.jboss.deployments" value="${basedir}/dist/JBOSS/standalone/deployments" />
+		<property name="dist.jboss.ear" value="${dist.jboss.deployments}/${ear.name}" />
+		<property name="dist.jboss.ear.metainfdir" value="${dist.jboss.deployments}/META-INF" />
+		<property name="dist.jboss.ear.applicationxml" value="${dist.jboss.ear.metainfdir}/application.xml" />
+		<property name="dist.jboss.ear.manifest" value="${dist.jboss.ear.metainfdir}/MANIFEST.MF" />
+
+		<if>
+			<not>
+				<isset property="gen.ear" />
+			</not>
+			<then>
+				<property name="gen.ear" value="true" />
+			</then>
+		</if>
+
+		<if>
+			<not>
+				<isset property="env.OBFUSCATE" />
+			</not>
+			<then>
+				<property name="env.OBFUSCATE" value="false" />
+			</then>
+		</if>
+
+		<if>
+			<not>
+				<isset property="env.BUILD_NUMBER" />
+			</not>
+			<then>
+				<property name="env.BUILD_NUMBER" value="undefined" />
+			</then>
+		</if>
+		<if>
+			<not>
+				<isset property="env.TFS_CHANGESET" />
+			</not>
+			<then>
+				<property name="env.TFS_CHANGESET" value="undefined" />
+			</then>
+		</if>
+
+		<target name="check.environment.dist">
+			<echo message="Checking environment to make dist" />
+
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.nmproductname}" unless="nm-om.product.name" />
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.nmproducttitle}" unless="nm-om.title" />
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.nmversion}" unless="nm-om.version" />
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.nmprjlist}" unless="nm-om.prj.list" />
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.rootjbosstree}" unless="root.jboss.tree" />
+			<fail message="${failure.missing.pre}&#xa;${failure.missing.rootjbossprojecttree}" unless="root.jboss.project.tree" />
+
+			<echo message="Check environment to make dist: OK" />
+		</target>
+
+		<target name="clean.dist">
+			<delete dir="${basedir}/dist" />
+			<delete dir="${lib.classpath.flatten.dir}" />
+		</target>
+
+		<target name="prepare.dist" depends="clean.dist">
+			<mkdir dir="${basedir}/dist" />
+		</target>
+
+		<target name="make.project.dist" depends="check.environment.dist,prepare.dist">
+			<echo message="==================================" />
+			<echo message="BUILDING: ${nm-om.product.name}" />
+			<echo message="TITLE: ${nm-om.title}" />
+			<echo message="VERSION: ${nm-om.version}" />
+			<echo message="BUILD: ${env.BUILD_NUMBER}" />
+			<echo message="CHANGESET: ${env.TFS_CHANGESET}" />
+			<echo message="PROJECTS: ${nm-om.prj.list}" />
+			<echo message="==================================" />
+
+			<!-- Copy local JBOSS directories to dist -->
+			<copy todir="${basedir}/dist/JBOSS" overwrite="true" failonerror="false">
+				<fileset dir="${root.jboss.tree}" />
+				<fileset dir="${root.jboss.project.tree}" />
+			</copy>
+			<if>
+				<not>
+					<isset property="build.production.environment" />
+				</not>
+				<then>
+					<if>
+						<available file="JBOSS_DEV" type="dir" />
+						<then>
+							<copy todir="${basedir}/dist/JBOSS" overwrite="true">
+								<fileset dir="JBOSS_DEV" />
+							</copy>
+						</then>
+					</if>
+					<if>
+						<available file="${nm-om.product.name}/JBOSS_DEV" type="dir" />
+						<then>
+							<copy todir="${basedir}/dist/JBOSS" overwrite="true">
+								<fileset dir="${nm-om.product.name}/JBOSS_DEV" />
+							</copy>
+						</then>
+					</if>
+				</then>
+			</if>
+			<chmod perm="755">
+				<fileset dir="${basedir}/dist/JBOSS" includes="**/*.sh" />
+			</chmod>
+
+			<!-- Copy local lib to dist -->
+			<copy todir="${dist.jboss.deployments}/lib" overwrite="true">
+				<fileset dir="lib" />
+			</copy>
+
+			<!-- Compile project list-->
+			<for list="${nm-om.prj.list}" param="prj" trim="true">
+				<sequential>
+					<if>
+						<available file="../@{prj}/build-${nm-om.product.name}.xml" type="file" />
+						<then>
+							<var name="build.to.launch" value="../@{prj}/build-${nm-om.product.name}.xml" />
+						</then>
+						<else>
+							<var name="build.to.launch" value="../@{prj}/build.xml" />
+						</else>
+					</if>
+
+					<if>
+						<isset property="build.production.environment" />
+						<then>
+							<ant antfile="${build.to.launch}" inheritAll="false">
+								<property name="build.production.environment" value="${build.production.environment}" />
+								<property name="lib.classpath.flatten.dir" value="${lib.classpath.flatten.dir}" />
+							</ant>
+						</then>
+						<else>
+							<ant antfile="${build.to.launch}" inheritAll="false">
+								<property name="lib.classpath.flatten.dir" value="${lib.classpath.flatten.dir}" />
+							</ant>
+						</else>
+					</if>
+				</sequential>
+			</for>
+
+			<!-- Copy every project dist to local dist -->
+			<for list="${nm-om.prj.list}" param="prj" trim="true">
+				<sequential>
+					<copy todir="${basedir}/dist" overwrite="true">
+						<fileset dir="../@{prj}/dist" />
+					</copy>
+					<chmod perm="755">
+						<fileset dir="${basedir}/dist" includes="**/*.sh" />
+					</chmod>
+				</sequential>
+			</for>
+
+			<!-- Check if produce EAR -->
+			<if>
+				<istrue value="${gen.ear}" />
+				<then>
+					<if>
+						<istrue value="${env.OBFUSCATE}" />
+						<then>
+							<!-- Obfuscate ear bytecode -->
+							<mkdir dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
+
+							<proguard shrink="false" optimize="false" preverify="false" obfuscate="true" ignorewarnings="false" note="false" warn="false" printseeds="obfuscateseeds.txt" printusage="obfuscateusage.txt" printmapping="obfuscatemapping.txt" dump="obfuscatedump.txt">
+								<injar>
+									<fileset dir="${dist.jboss.deployments}" includes="*.jar,*.war" />
+								</injar>
+
+								<!-- java libraries my java application depends on -->
+								<libraryjar name="${env.JAVA_HOME}/jre/lib/rt.jar" />
+								<libraryjar dir="${dist.jboss.deployments}/lib" />
+								<!--libraryjar dir="${lib.classpath.flatten.dir}" /-->
+
+								<outjar name="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
+
+								<keepclasseswithmembers allowshrinking="true" includedescriptorclasses="true">
+									<method type="class" name="*" parameters="native" />
+								</keepclasseswithmembers>
+
+							</proguard>
+
+							<!-- substitute "injars" with "outjar" when obfuscation is complete -->
+							<move todir="${dist.jboss.deployments}">
+								<fileset dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" includes="*.jar,*.war" />
+							</move>
+							<delete dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
+						</then>
+					</if>
+
+					<tstamp>
+						<format property="B_TSTAMP" pattern="dd-MM-yyyy HH:mm:ss" locale="it,IT" />
+					</tstamp>
+
+					<manifest file="${dist.jboss.ear.manifest}">
+						<attribute name="Built-By" value="${user.name}" />
+						<attribute name="Built-Date" value="${B_TSTAMP}" />
+						<attribute name="Built-Changeset" value="${env.TFS_CHANGESET}" />
+						<attribute name="Specification-Title" value="${nm-om.title}" />
+						<attribute name="Specification-Version" value="${nm-om.version}" />
+						<attribute name="Specification-Vendor" value="Italtel S.p.A." />
+						<attribute name="Implementation-Title" value="${nm-om.title}" />
+						<attribute name="Implementation-Version" value="${env.BUILD_NUMBER}" />
+						<attribute name="Implementation-Vendor" value="Italtel S.p.A." />
+					</manifest>
+
+					<if>
+						<isset property="build.production.environment" />
+						<then>
+							<!-- PRODUCTION: Generate zipped EAR -->
+							<echo message="Generating zipped EAR: ${dist.jboss.ear}" />
+							<ear destfile="${dist.jboss.ear}" appxml="${dist.jboss.ear.applicationxml}" manifest="${dist.jboss.ear.manifest}">
+								<metainf dir="${dist.jboss.ear.metainfdir}" excludes="application.xml,MANIFEST.MF" />
+								<fileset dir="${dist.jboss.deployments}" includes="*.jar,*.war" />
+								<zipfileset dir="${dist.jboss.deployments}/lib" erroronmissingdir="false" prefix="lib" includes="*.jar" />
+							</ear>
+						</then>
+						<else>
+							<!-- DEV: Generate zipped EAR -->
+							<echo message="Generating zipped EAR: ${basedir}/dist/${ear.name}" />
+							<ear destfile="${basedir}/dist/${ear.name}" appxml="${dist.jboss.ear.applicationxml}" manifest="${dist.jboss.ear.manifest}">
+								<metainf dir="${dist.jboss.ear.metainfdir}" excludes="application.xml,MANIFEST.MF" />
+								<fileset dir="${dist.jboss.deployments}" includes="*.jar,*.war" />
+								<zipfileset dir="${dist.jboss.deployments}/lib" erroronmissingdir="false" prefix="lib" includes="*.jar" />
+							</ear>
+							<!-- DEV: Generate unzipped EAR -->
+							<echo message="Generating unzipped EAR: ${dist.jboss.ear}" />
+							<mkdir dir="${dist.jboss.ear}" />
+							<copy todir="${dist.jboss.ear}">
+								<fileset dir="${dist.jboss.deployments}" excludes="${ear.name}" />
+							</copy>
+						</else>
+					</if>
+
+					<!-- Delete all used components to generate EAR -->
+					<delete includeemptydirs="true">
+						<fileset dir="${dist.jboss.deployments}" excludes="${ear.name}/**" />
+					</delete>
+				</then>
+			</if>
+
+		</target>
+
+		<!-- PRODUCTION -->
+		<target name="publish.target">
+			<antcall target="publish">
+				<param name="build.production.environment" value="target" />
+			</antcall>
+			<exec executable="tar">
+				<arg value="-cvz" />
+				<arg value="--file=${rpm.sources}/RELEASE.tgz" />
+				<arg value="--directory=RELEASE" />
+				<arg value="." />
+			</exec>
+		</target>
+
+		<!-- DEV -->
+		<target name="publish.dev">
+			<antcall target="publish" />
+		</target>
+
+		<target name="publish" depends="check.environment.release,prepare.release">
+			<!-- Produce dist -->
+			<if>
+				<isset property="build.production.environment" />
+				<!-- PRODUCTION -->
+				<then>
+					<property name="env.JBOSS_HOME" value="../FRONTEND/RELEASE/${env.JBOSS_VERSION}" />
+					<antcall target="make.project.dist">
+						<param name="env.JBOSS_HOME" value="${env.JBOSS_HOME}" />
+						<param name="env.PYANG_PATH" value="${env.PYANG_PATH}" />
+					</antcall>
+				</then>
+				<!-- DEV -->
+				<else>
+					<antcall target="make.project.dist" />
+				</else>
+			</if>
+
+			<!-- Publish dist/JBOSS to JBOSS_HOME -->
+			<if>
+				<available file="${basedir}/dist/JBOSS" type="dir" />
+				<then>
+					<copy todir="${env.JBOSS_HOME}" overwrite="true">
+						<fileset dir="${basedir}/dist/JBOSS" />
+					</copy>
+					<chmod perm="755">
+						<fileset dir="${env.JBOSS_HOME}" includes="**/*.sh" />
+					</chmod>
+				</then>
+			</if>
+
+			<tstamp>
+				<format property="BP_TSTAMP" pattern="dd-MM-yyyy HH:mm:ss" locale="it,IT" />
+			</tstamp>
+			<echo message="${nm-om.product.name} BUILD AND PUBLISH COMPLETED at ${BP_TSTAMP}" />
+		</target>
+
+		<target name="load.properties">
+			<if>
+				<isset property="build.production.environment" />
+				<!-- PRODUCTION -->
+				<then>
+					<loadproperties srcFile="${conf.build}/env.build.properties" />
+					<property name="env.JBOSS_HOME" value="../FRONTEND/RELEASE/${env.JBOSS_VERSION}" />
+				</then>
+				<!-- DEV -->
+				<else>
+				</else>
+			</if>
+
+			<if>
+				<isset property="env.JBOSS_VERSION_NUMBER" />
+				<then>
+					<if>
+						<available file="JBOSS_${env.JBOSS_VERSION_NUMBER}" type="dir" />
+						<then>
+							<property name="root.jboss.tree" value="JBOSS_${env.JBOSS_VERSION_NUMBER}" />
+						</then>
+						<else>
+							<property name="root.jboss.tree" value="${basedir}/JBOSS" />
+						</else>
+					</if>
+					<if>
+						<available file="${nm-om.product.name}/JBOSS_${env.JBOSS_VERSION_NUMBER}" type="dir" />
+						<then>
+							<property name="root.jboss.project.tree" value="${nm-om.product.name}/JBOSS_${env.JBOSS_VERSION_NUMBER}" />
+						</then>
+						<else>
+							<property name="root.jboss.project.tree" value="${nm-om.product.name}/JBOSS" />
+						</else>
+					</if>
+				</then>
+				<else>
+					<property name="root.jboss.tree" value="JBOSS" />
+					<property name="root.jboss.project.tree" value="${nm-om.product.name}/JBOSS" />
+				</else>
+			</if>
+		</target>
+
+
+		<target name="check.environment.release" depends="load.properties">
+			<if>
+				<isset property="build.production.environment" />
+				<!-- PRODUCTION -->
+				<then>
+					<echo message="Checking environment to make release for production" />
+					<!--loadproperties srcFile="${conf.build}/env.build.properties" /-->
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.jbosszip}" unless="env.JBOSS_ZIP" />
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.jbossversion}" unless="env.JBOSS_VERSION" />
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.javazip}" unless="env.JAVA_ZIP" />
+				</then>
+				<!-- DEV -->
+				<else>
+					<echo message="Checking environment to make release for dev" />
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.jbosshome}" unless="env.JBOSS_HOME" />
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.modulesdir}">
+						<condition>
+							<not>
+								<available file="${env.JBOSS_HOME}/modules.orig" type="dir" />
+							</not>
+						</condition>
+					</fail>
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.standalonedir}">
+						<condition>
+							<not>
+								<available file="${env.JBOSS_HOME}/standalone.orig" type="dir" />
+							</not>
+						</condition>
+					</fail>
+					<fail message="${failure.missing.pre}&#xa;${failure.missing.domaindir}">
+						<condition>
+							<not>
+								<available file="${env.JBOSS_HOME}/domain.orig" type="dir" />
+							</not>
+						</condition>
+					</fail>
+				</else>
+			</if>
+			<echo message="Check environment to make release: OK" />
+		</target>
+
+		<target name="prepare.release">
+			<if>
+				<isset property="build.production.environment" />
+				<!-- PRODUCTION -->
+				<then>
+					<delete dir="${basedir}/FRONTEND/RELEASE" />
+					<mkdir dir="${basedir}/FRONTEND/RELEASE" />
+					<mkdir dir="${basedir}/FRONTEND/RELEASE/conf" />
+					<!-- Add configuration files to RELEASE-->
+					<copy file="${conf.target}/env.target.properties" tofile="${basedir}/FRONTEND/RELEASE/conf/environment" overwrite="true" />
+					<copy file="${conf.target}/config.properties" tofile="RELEASE/conf/config.properties" overwrite="true" />
+					<copy file="${conf.target}/avpfields.conf" tofile="RELEASE/conf/avpfields.conf" overwrite="true" />
+					<!-- Unzip JBOSS and add to RELEASE -->
+					<!-- Command Line Unzip preserves permissions, Unzip task does not -->
+					<exec executable="unzip">
+						<arg line="-o ${env.JBOSS_ZIP} -d ${basedir}/FRONTEND/RELEASE" />
+					</exec>
+					<delete>
+						<fileset dir="${basedir}/FRONTEND/RELEASE/${env.JBOSS_VERSION}/standalone/deployments" includes="*" />
+					</delete>
+				</then>
+				<!-- DEV -->
+				<else>
+					<delete dir="${env.JBOSS_HOME}/modules" />
+					<copy todir="${env.JBOSS_HOME}/modules" overwrite="true">
+						<fileset dir="${env.JBOSS_HOME}/modules.orig" />
+					</copy>
+					<delete dir="${env.JBOSS_HOME}/domain" />
+					<copy todir="${env.JBOSS_HOME}/domain" overwrite="true">
+						<fileset dir="${env.JBOSS_HOME}/domain.orig" />
+					</copy>
+					<delete dir="${env.JBOSS_HOME}/standalone" />
+					<copy todir="${env.JBOSS_HOME}/standalone" overwrite="true">
+						<fileset dir="${env.JBOSS_HOME}/standalone.orig" />
+					</copy>
+					<delete>
+						<fileset dir="${env.JBOSS_HOME}/standalone/deployments" />
+					</delete>
+				</else>
+			</if>
+
+		</target>
+
+
+	
+</project>
+
+

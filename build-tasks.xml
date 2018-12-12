@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Build-Tasks-Definition" default="">
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="./frontend/application/MonitoringFE/lib.test/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
+</project>
