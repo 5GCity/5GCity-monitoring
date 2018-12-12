@@ -53,25 +53,3 @@ function resourceUsageProgress(current, max, targetDom, title) {
 	$(targetDom).html(content);
 }
 
-/* Services */
-function WS_getInventoryService(serviceName, handler, targetDom) {
-	getValues(_BASE_WEB_ROOT + '/inventoryService/' + mediaIfcName, handler, null, targetDom);
-}
-function WS_getList(handler, targetDom) {
-	getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/mediaInterface', handler, null, targetDom);
-}
-function WS_createMediaIfc(inputData, handler, targetDom) {
-	putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/mediaInterface', inputData, handler, null, targetDom,
-			'modal-body');
-}
-function WS_deleteMediaIfc(mediaIfcName, handler, targetDom) {
-	deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/mediaInterface/' + mediaIfcName, handler, null, targetDom,
-			'modal-body');
-}
-function WS_updateMediaIfc(inputData, handler, targetDom) {
-	postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/mediaInterface', inputData, handler, null, targetDom,
-			'modal-body');
-}
-function WS_getMediaIfcTemplate(handler, targetDom) {
-	getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/mediaInterface/template', handler, null, targetDom);
-}

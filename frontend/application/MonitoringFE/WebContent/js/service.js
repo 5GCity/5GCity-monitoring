@@ -55,7 +55,7 @@ $.Service = {
 		confirmDeleteButton('#nav-toolbar', service.name,
 					$.Service.actionRemove);
 			
-		setPageTitle('Inventory Services: '+ service.name);
+		setPageTitle('Services: '+ service.name);
 		setActiveMenu('menu_service');
 
 		$.Service.displayFormData(service, targetDom, true, true);
@@ -71,17 +71,6 @@ $.Service = {
 		cancelButton('#nav-toolbar', $.Service.listPageLink);
 		$.Service.displayFormData(service, targetDom);
 		
-//		var nodes = Preloader.getResource('inventoryNode').nodes;
-//		if(nodes && nodes.length > 0) {
-//			saveButton('#nav-toolbar', $.Service.actionCreate);
-//			cancelButton('#nav-toolbar', $.Service.listPageLink);
-//			$.Service.displayFormData(service, targetDom);
-//		} else {
-//			cancelButton('#nav-toolbar', $.Service.listPageLink);
-//			$('.display-message').each(function() {
-//				$(this).html('<div class="alert alert-danger">An inventoryNode needs at least a Service</div>');
-//			});
-//		}
 	},
 
 	displayUpdatePage : function(data, targetDom) {
@@ -131,7 +120,7 @@ $.Service = {
 		boxNodeList += '</div>';
 		
 		content += '<div class="col-md-6">';
-		content += condensedBoxPrimary('InventoryNode List', boxNodeList);
+		content += condensedBoxPrimary('Node List', boxNodeList);
 		content += '</div>';
 		
 		var boxMetricList = '';
@@ -140,7 +129,7 @@ $.Service = {
 		boxMetricList += '</div>';
 		
 		content += '<div class="col-md-6">';
-		content += condensedBoxPrimary('InventoryMetric List', boxMetricList);
+		content += condensedBoxPrimary('Metric List', boxMetricList);
 		content += '</div>';		
 		content += '</form>';
 
@@ -195,7 +184,7 @@ $.Service = {
 
 		createButton('inventoryService', '#nav-toolbar');
 		
-		setPageTitle('Inventory Services');
+		setPageTitle('Services');
 		setActiveMenu('menu_service');
 
 		var boxcontent = '';
@@ -323,14 +312,14 @@ $.Service.WS = {
 
 		update : function(inputData, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService',
+			postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
 					inputData, successHandler, errorHandler, targetDom,
 					'modal-body');
 		},
 
 		create : function(inputData, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService',
+			putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
 					inputData, successHandler, errorHandler, targetDom,
 					'modal-body');
 		},
@@ -338,25 +327,25 @@ $.Service.WS = {
 		list : function(successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
 			
-			getValues('/FrontEnd/rest/fe/inventoryService',
+			getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
 					successHandler, errorHandler, targetDom);
 		},
 
 		remove : function(name, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService/'
+			deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service/'
 					+ name, successHandler, errorHandler, targetDom, 'modal-body');
 		},
 
 		read : function(name, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService/' + name,
+			getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service/' + name,
 					successHandler, errorHandler, targetDom);
 		},
 
 		template : function(successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryService/template',
+			getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service/template',
 					successHandler, errorHandler, targetDom);
 		},
 

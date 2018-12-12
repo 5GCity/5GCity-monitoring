@@ -86,19 +86,21 @@ a. Untar file _MONITORING-`<DATE>`.tar_ generated in Build phase in a new direct
 - _cd mon_
 - _tar xvfz `<pathBuild>`/5GCity-monitoring/target/tar/MONITORING-`<DATE>`.tar_
 	
-b. (Optional) The file _`<pathRun>`/config\.properties_ contains the default values for the ports used to run grafana(3000), prometheus(9090) and frontend application(8888)
+b. (Mandatory only on first deployment) The file _`<pathRun>`/config\.properties_ must contain the values for the ports used to run grafana(default=3000), prometheus(default=9090) and frontend application(default=8888)
 
-If you want to use ports'values different from default, please edit this file before to proceed with step c.
+- _cp `<pathRun>`/config\.properties\.sample `<pathRun>`/config\.properties_
 
-c. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
+c. (Optional) If you want to use ports'values different from default, please edit this file (_`<pathRun>`/config\.properties_) before to proceed with step d.
+
+d. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
 	
 - _./install.sh `<IPAddressTarget>`_
 	
-d. Run command  docker-compose up  in background to startup 5G monitoring application
+e. Run command  docker-compose up  in background to startup 5G monitoring application
 
 - _docker-compose up -d_
 
-NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps b., c. and d. again.  
+NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps c., d. and e. again.  
  To shutdown the 5G monitoring application run the command: *docker-compose down*
 
 		
@@ -106,12 +108,12 @@ NOTE: whenever you have an error in startup 5G monitoring application (i.e port 
 
 Once the Monitoring manager is running, please open in your browser the Monitoring WebGui from
 _http://`<IPAddressTarget>`:`<FrontEndPort>`/FrontEnd_
-(for example ->  http://138.132.116.146:8888/FrontEnd)
+(for example ->  http://10.10.10.10:8888/FrontEnd)
 
 From Dashboard you will connect to Grafana Tool by user admin/monitoring, using `<GrafanaPort>`:  you can see SummaryNODE dashboard for the node 
 _`<IPAddressTarget>`_
 
-You can add more inventory services and their relative inventory nodes / inventory metrics from the Monitoring WebGUI application.
+You can add more services and their relative nodes / metrics from the Monitoring WebGUI application.
 
 
 ## License

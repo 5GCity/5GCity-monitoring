@@ -27,99 +27,99 @@ import com.italtel.monitoring.fe.ws.entity.Result;
 @WebService
 public interface InventoryWSInterface {
 
-	@GET
-	@Path("/test")
-	@WebMethod(operationName = "test")
-	@WebResult(name = "return")
-	public String test();
+//	@GET
+//	@Path("/test")
+//	@WebMethod(operationName = "test")
+//	@WebResult(name = "return")
+//	public String test();
 
 	/********************
 	 * InventoryService *
 	 ********************/
 
 	@PUT
-	@Path("/inventoryService")
-	@WebMethod(operationName = "createInventoryService")
+	@Path("/service")
+	@WebMethod(operationName = "createService")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> createInventoryService(@WebParam(
-			name = "inventoryService") InventoryService inventoryService);
+			name = "service") InventoryService inventoryService);
 
 	@GET
-	@Path("/inventoryService/{name}")
-	@WebMethod(operationName = "getInventoryService")
+	@Path("/service/{name}")
+	@WebMethod(operationName = "getService")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> getInventoryService(
 			@PathParam("name") @WebParam(name = "name") String name);
 
 	@DELETE
-	@Path("/inventoryService/{name}")
-	@WebMethod(operationName = "deleteInventoryService")
+	@Path("/service/{name}")
+	@WebMethod(operationName = "deleteService")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<?> deleteInventoryService(@PathParam("name") @WebParam(
 			name = "name") String name);
 
 	@GET
-	@Path("/inventoryService")
-	@WebMethod(operationName = "listInventoryServices")
+	@Path("/service")
+	@WebMethod(operationName = "listServices")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryServices> listInventoryServices();
 
 	@GET
-	@Path("/inventoryService/template")
-	@WebMethod(operationName = "getInventoryServiceDefault")
+	@Path("/service/template")
+	@WebMethod(operationName = "getServiceDefault")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> getInventoryServiceDefault();
 
 	@POST
-	@Path("/inventoryService")
-	@WebMethod(operationName = "updateInventoryService")
+	@Path("/service")
+	@WebMethod(operationName = "updateService")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> updateInventoryService(@WebParam(
-			name = "inventoryService") InventoryService inventoryService);
+			name = "service") InventoryService inventoryService);
 
 	/********************
 	 * InventoryNode *
 	 ********************/
 	@PUT
-	@Path("/inventoryNode")
-	@WebMethod(operationName = "createInventoryNode")
+	@Path("/node")
+	@WebMethod(operationName = "createNode")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryNode> createInventoryNode(@WebParam(
-			name = "inventoryNode") InventoryNode inventoryNode);
+			name = "node") InventoryNode inventoryNode);
 
 	@GET
-	@Path("/inventoryNode/{name}")
-	@WebMethod(operationName = "getInventoryNode")
+	@Path("/node/{name}")
+	@WebMethod(operationName = "getNode")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryNode> getInventoryNode(@PathParam("name") @WebParam(
 			name = "name") String name);
 
 	@DELETE
-	@Path("/inventoryNode/{name}")
-	@WebMethod(operationName = "deleteInventoryNode")
+	@Path("/node/{name}")
+	@WebMethod(operationName = "deleteNode")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<?> deleteInventoryNode(@PathParam("name") @WebParam(
 			name = "name") String name);
 
 	@GET
-	@Path("/inventoryNode")
-	@WebMethod(operationName = "listInventoryNodes")
+	@Path("/node")
+	@WebMethod(operationName = "listNodes")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryNodes> listInventoryNodes();
 
 	@GET
-	@Path("/inventoryNode/template")
-	@WebMethod(operationName = "getInventoryNodeDefault")
+	@Path("/node/template")
+	@WebMethod(operationName = "getNodeDefault")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryNode> getInventoryNodeDefault();
@@ -128,39 +128,39 @@ public interface InventoryWSInterface {
 	 * InventoryMetric *
 	 ********************/
 	@PUT
-	@Path("/inventoryMetric")
-	@WebMethod(operationName = "createInventoryMetric")
+	@Path("/metric")
+	@WebMethod(operationName = "createMetric")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryMetric> createInventoryMetric(@WebParam(
-			name = "inventoryMetric") InventoryMetric inventoryMetric);
+			name = "metric") InventoryMetric inventoryMetric);
 
 	@GET
-	@Path("/inventoryMetric/{name}")
-	@WebMethod(operationName = "getInventoryMetric")
+	@Path("/metric/{name}")
+	@WebMethod(operationName = "getMetric")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryMetric> getInventoryMetric(
 			@PathParam("name") @WebParam(name = "name") String name);
 
 	@DELETE
-	@Path("/inventoryMetric/{name}")
-	@WebMethod(operationName = "deleteInventoryMetric")
+	@Path("/metric/{name}")
+	@WebMethod(operationName = "deleteMetric")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<?> deleteInventoryMetric(@PathParam("name") @WebParam(
 			name = "name") String name);
 
 	@GET
-	@Path("/inventoryMetric")
-	@WebMethod(operationName = "listInventoryMetrics")
+	@Path("/metric")
+	@WebMethod(operationName = "listMetrics")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryMetrics> listInventoryMetrics();
 
 	@GET
-	@Path("/inventoryMetric/template")
-	@WebMethod(operationName = "getInventoryMetricDefault")
+	@Path("/metric/template")
+	@WebMethod(operationName = "getMetricDefault")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryMetric> getInventoryMetricDefault();

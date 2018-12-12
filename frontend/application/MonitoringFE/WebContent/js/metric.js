@@ -52,7 +52,7 @@ $.Metric = {
 		confirmDeleteButton('#nav-toolbar', obj.name,
 					$.Metric.actionRemove);
 		
-		setPageTitle('Inventory Metrics: '+ obj.name);
+		setPageTitle('Metrics: '+ obj.name);
 		setActiveMenu('menu_metric');
 
 		$.Metric.displayFormData(obj, targetDom, true, true);
@@ -118,7 +118,7 @@ $.Metric = {
 
 		createButton('inventoryMetric', '#nav-toolbar');
 		
-		setPageTitle('Inventory Metrics');
+		setPageTitle('Metrics');
 		setActiveMenu('menu_metric');
 
 		var boxcontent = '';
@@ -176,7 +176,7 @@ $.Metric.WS = {
 	create : function(inputData, successHandler, errorHandler, targetDom) {
 		console.log("CREATE");
 		errorHandler = errorHandler || null;
-		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric',
+		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric',
 				inputData, successHandler, errorHandler, targetDom,
 				'modal-body');
 	},
@@ -184,26 +184,26 @@ $.Metric.WS = {
 	list : function(successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
 		
-		getValues('/FrontEnd/rest/fe/inventoryMetric',
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric',
 				successHandler, errorHandler, targetDom);
 	},
 
 	remove : function(name, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric/'
+		deleteValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric/'
 				+ name, successHandler, errorHandler, targetDom, 'modal-body');
 	},
 
 	read : function(name, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric/' + name,
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric/' + name,
 				successHandler, errorHandler, targetDom);
 	},
 
 	template : function(successHandler, errorHandler, targetDom) {
 		console.log("TEMPLATE");
 		errorHandler = errorHandler || null;
-		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/inventoryMetric/template',
+		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric/template',
 				successHandler, errorHandler, targetDom);
 	},
 
