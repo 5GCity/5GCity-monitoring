@@ -30,10 +30,10 @@
 			</section>
 		</aside>
 		<div class="content-wrapper">
-			<section class="content">
+			<section class="content" style="padding:0px;">
 				<div class="display-message"></div>
 				<iframe id="myIframe"
-					style="width: 100%; height: 800px;border:0;"></iframe>
+					style="width: 100%; height: 800px;border:0px;"></iframe>
 			</section>
 		</div>
 		<jsp:include page="include/footer.jsp" />
