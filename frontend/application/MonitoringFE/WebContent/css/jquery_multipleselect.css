@@ -1,0 +1,96 @@
+div#fieldChooser {
+	max-width:550px;
+    width: calc( 100% - 20px);
+    height: 200px;
+    margin: auto;
+}
+
+.fc-field {
+    width: 170px;
+    height: 28px;
+    margin: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 10px 0px rgba(222, 222, 222, 1.0);
+}
+
+.fc-source-fields .fc-field{
+    box-shadow: 0px 0px 5px 0px #3c8dbc;
+}
+
+.fc-field:hover {
+    outline: #cacaca solid 1px;
+    cursor: move;
+}
+
+.fc-selected {
+    background-color: #3c8dbc;
+}
+
+.fc-selected:hover {
+    background-color: #357ca5;
+}
+
+/* .fc-field-list { */
+/*     width: 200px; */
+/*     height: 170px; */
+/*     margin: 0px; */
+/*     padding: 3px; */
+/*     overflow: auto; */
+/*     border: 1px solid #cacaca; */
+/* } */
+.fc-field-list {
+/* 	width: 100%; */ /* settata dalla classe bootstrap */
+	min-width: 85px;
+	max-width: 200px;
+	height: 170px;
+    margin: 0px;
+    padding: 3px;
+    overflow: auto;
+    border: 1px solid #cacaca;
+}
+
+.fc-source-fields {
+    float: left;
+}
+
+.fc-destination-fields {
+    float: right;
+}
+
+.switchimg {
+    white-space: nowrap;  
+    text-align: center;
+    vertical-align: middle; 
+    
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+
+.helper {
+    display: inline-block;
+    height: 80px;
+}
+
+/* .btn-chevron{ */
+/* 	margin: 3px; */
+/* } */
+.btn-chevron{
+	margin-top: 3px;
+	margin-bottom: 3px;
+    width: 100%;
+    max-width: 34px;
+    min-width: 28px;
+}
+
+.min-width-input-number
+{
+	min-width: 46px;
+}
+.btn-save
+{
+	width: 88px;
+}
+

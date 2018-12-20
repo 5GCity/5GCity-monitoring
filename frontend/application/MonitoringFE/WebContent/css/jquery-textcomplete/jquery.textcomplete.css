@@ -1,0 +1,36 @@
+/* Sample */
+
+.dropdown-menu.textcomplete {
+    border: 1px solid #ddd;
+    background-color: white;
+}
+
+.dropdown-menu.textcomplete li {
+    border-top: 1px solid #ddd;
+    padding: 2px 5px;
+}
+
+.dropdown-menu.textcomplete li:first-child {
+    border-top: none;
+}
+
+.dropdown-menu.textcomplete li:hover,
+.dropdown-menu.textcomplete .active {
+    background-color: rgb(110, 183, 219);
+}
+
+.dropdown-menu.textcomplete .active a {
+	background-color: inherit;
+}
+
+/* SHOULD not modify */
+
+.dropdown-menu.textcomplete {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu.textcomplete a:hover {
+    cursor: pointer;
+}

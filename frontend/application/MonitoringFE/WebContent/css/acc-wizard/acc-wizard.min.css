@@ -1,0 +1,84 @@
+/*!
+ * Sample styles for jQuery accordion wizard based on bootstrap
+ * Original author: @stephen_thomas
+ * Licensed under the MIT license
+ */
+.acc-wizard-sidebar {
+	counter-reset: acc-wizard-counter;
+	margin-left: 0;
+	padding-left: 0
+}
+
+.acc-wizard-sidebar .acc-wizard-task {
+	position: relative;
+	margin: 0 0 .5em 2em;
+	list-style: none
+}
+
+.acc-wizard-sidebar .acc-wizard-task:before {
+	content: counter(acc-wizard-counter);
+	counter-increment: acc-wizard-counter;
+	position: absolute;
+	left: -2em;
+	top: 65%;
+	margin-top: -1em;
+	height: 1.5em;
+	width: 1.5em;
+	line-height: 1.5em;
+	border: 0;
+	text-align: center;
+	font-weight: 700;
+	color: #fff;
+	border-radius: 1.5em
+}
+
+.acc-wizard-sidebar .acc-wizard-task a {
+	color: #333
+}
+
+.acc-wizard-sidebar .acc-wizard-task:before {
+	background: #333
+}
+
+.acc-wizard-sidebar .acc-wizard-task.acc-wizard-completed,
+	.acc-wizard-sidebar .acc-wizard-task.acc-wizard-completed a {
+	color: #999
+}
+
+.acc-wizard-sidebar .acc-wizard-task.acc-wizard-completed:before {
+	background: #999
+}
+
+.acc-wizard-sidebar .acc-wizard-task.acc-wizard-completed:after {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 1.33333333em;
+	width: 1.875em;
+	content: "\00a0\2713";
+	position: relative;
+	bottom: .1em
+}
+
+.acc-wizard-sidebar .acc-wizard-task.acc-wizard-active,
+	.acc-wizard-sidebar .acc-wizard-task.acc-wizard-active a {
+	color: #08c
+}
+
+.acc-wizard-sidebar .acc-wizard-task.acc-wizard-active:before {
+	background: #08c
+}
+
+.acc-wizard-step {
+	margin-top: 20px;
+}
+
+.panel-heading {
+	height: 2.6em;
+	position: relative;
+	z-index: 1
+}
+
+.panel-collapse {
+	padding-top: 2.6em;
+	margin-top: -2.6em
+}
