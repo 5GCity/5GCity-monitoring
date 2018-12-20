@@ -16,8 +16,9 @@ rule_files:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'node'
+  - job_name: 'Monitoring'
     static_configs:
     - targets: ['__HOST_MON__:9100']
       labels:
         metricGroup: NODE
+        instance: Monitoring

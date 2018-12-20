@@ -1,4 +1,3 @@
-
 <script>
 function showdisclaimer(){
 // 	alert('disclaimer');
@@ -74,7 +73,7 @@ function copyright(){
 }
 
 </script>
-<footer class="main-footer">
+<footer class="main-footer main5g-footer">
 	
 	<div class="pull-right hidden-xs">
 		Powered By <b><a href="#" onclick="showdisclaimer()">AdminLTE 2</a></b>

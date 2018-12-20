@@ -110,7 +110,7 @@ Once the Monitoring manager is running, please open in your browser the Monitori
 _http://`<IPAddressTarget>`:`<FrontEndPort>`/FrontEnd_
 (for example ->  http://10.10.10.10:8888/FrontEnd)
 
-From Dashboard you will connect to Grafana Tool by user admin/monitoring, using `<GrafanaPort>`:  you can see SummaryNODE dashboard for the node 
+From Dashboard you will connect to Grafana Tool by user admin/monitoring, using `<GrafanaPort>`:  you can see SummaryNODE dashboard for the node of "Monitoring" itself with IP Address
 _`<IPAddressTarget>`_
 
 You can add more services and their relative nodes / metrics from the Monitoring WebGUI application.
