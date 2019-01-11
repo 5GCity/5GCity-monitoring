@@ -46,6 +46,13 @@ import com.italtel.monitoring.fe.utils.OSUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class ConfigurationDispatcherBean implements
 		ConfigurationDispatcherService {
+	
+	private static final String QUERY_CHECK_METRIC = "select d from InventoryMetric d";
+	private static final String QUERY_CHECK_NODE = "select d from InventoryNode d";
+	private static final String QUERY_CHECK_SERVICE = "select d from InventoryService d";
+	private static final Integer PORT = 9100;
+	private static final Integer INTERVAL= 30;
+	private static final String  MONITORING = "Monitoring";
 
 	@PersistenceContext(unitName = "MONITORING-DB")
 	EntityManager em;
@@ -58,6 +65,61 @@ public class ConfigurationDispatcherBean implements
 	@PostConstruct
 	public void init() {
 		log.debug("Init ConfigurationDispatcherBean");
+		
+		InventoryMetric metric = new InventoryMetric();
+		InventoryNode node = new InventoryNode();
+		boolean nodeB=false;
+		boolean metricB=false;
+		if (em.createQuery(QUERY_CHECK_METRIC).getResultList().isEmpty()) {
+			log.info("%%% initialize metric table %%%");
+			
+			metric.setName("NODE");
+			metric.setDesc("Metric Group NODE");
+			metricB=true;
+			em.persist(metric);
+		}
+	
+		if (em.createQuery(QUERY_CHECK_NODE).getResultList().isEmpty()) {
+			log.info("%%% initialize node table %%%");
+			
+			node.setName(MONITORING);
+			String host=System.getenv("HOST_MON");
+	        if (host==null)
+			  node.setIp("localhost");
+	        else 
+	        	node.setIp(host);
+			node.setPort(PORT);
+			nodeB=true;
+			em.persist(node);
+			
+		}
+	
+		
+		if (em.createQuery(QUERY_CHECK_SERVICE).getResultList().isEmpty()) {
+			log.info("%%% initialize service table %%%");
+			if (nodeB && metricB) {
+			InventoryService srv = new InventoryService();
+			List<InventoryServiceInventoryMetric> metrics=new ArrayList<InventoryServiceInventoryMetric>();
+			List<InventoryServiceInventoryNode> nodes=new ArrayList<InventoryServiceInventoryNode>();
+			srv.setName(MONITORING);
+			srv.setDescription("Service that monitors the node of 5G-Monitoring for metric group NODE");
+			srv.setInterval(INTERVAL);
+			InventoryServiceInventoryMetric srvmetric=new InventoryServiceInventoryMetric();
+			srvmetric.setMetric(metric);
+			srvmetric.setInventoryMetricName(metric.getName());
+			metrics.add(srvmetric);
+			InventoryServiceInventoryNode srvnode=new InventoryServiceInventoryNode();
+			srvnode.setNode(node);
+			srvnode.setInventoryNodeName(node.getName());
+			nodes.add(srvnode);
+			srv.setInventoryMetrics(metrics);
+			srv.setInventoryNodes(nodes);
+			em.persist(srv);
+			
+			} else log.error("%%% initialize service table not done%%%");
+				
+		}
+		
 	}
 
 	@PreDestroy
@@ -109,11 +171,13 @@ public class ConfigurationDispatcherBean implements
 				String serviceName = service.getName();
 				if (serviceName == null || serviceName.isEmpty()) {
 					throw new ConfigException(
-							"InventoryService name is null or empty");
+							"Service name is null or empty");
 				}
+				
+				
 				if ((service.getInterval() < 0) || (service.getInterval() > 60)) {
 					throw new ConfigException(
-							"InventoryService interval is out of range (" + 0
+							"Service interval is out of range (" + 0
 									+ "-" + 60 + ")");
 				}
 
@@ -131,12 +195,17 @@ public class ConfigurationDispatcherBean implements
 
 			if ((metric.getName() == null) || (metric.getName().isEmpty())) {
 				throw new ConfigException(
-						"InventoryMetric name is null or empty");
+						"Metric name is null or empty");
+			}
+			
+			if (metric.getName().equals(MetricTypeEnum.NODE.toString())) {
+				throw new ConfigException(
+						"Metric name NODE cannot be created");
 			}
 
 			boolean found = false;
 			for (MetricTypeEnum mte : MetricTypeEnum.values()) {
-				log.debug("InventoryMetric value is  metric "
+				log.debug("Metric value is  metric "
 						+ metric.getName() + ";  mte is " + mte);
 				if (mte.toString().equals(metric.getName())) {
 					found = true;
@@ -144,9 +213,9 @@ public class ConfigurationDispatcherBean implements
 				}
 			}
 			if (!found) {
-				log.error("InventoryMetric value is not a valid metric");
+				log.error("Metric value is not a valid metric");
 				throw new ConfigException(
-						"InventoryMetric value is not a valid metric");
+						"Metric value is not a valid metric");
 			}
 
 		}
@@ -157,12 +226,17 @@ public class ConfigurationDispatcherBean implements
 			InventoryNode node = (InventoryNode) obj;
 
 			if ((node.getName() == null) || (node.getName().isEmpty())) {
-				throw new ConfigException("InventoryNode name is null or empty");
+				throw new ConfigException("Node name is null or empty");
+			}
+			
+			if (node.getName().equals(MONITORING)) {
+				throw new ConfigException(
+						"Node name Monitoring cannot be created");
 			}
 
 			if ((node.getPort() < 0) || (node.getPort() > 65535)) {
 				throw new ConfigException(
-						"InventoryNode port is out of range (" + 0 + "-"
+						"Node port is out of range (" + 0 + "-"
 								+ 65536 + ")");
 			}
 		}
@@ -187,9 +261,9 @@ public class ConfigurationDispatcherBean implements
 		if ((serviceMetrics != null) && (!serviceMetrics.isEmpty())) {
 			validateMetricsInService(serviceMetrics, inventoryMetricNames);
 		} else {
-			log.error("At least one InventoryMetric must be present");
+			log.error("At least one metric must be present");
 			throw new ConfigException(
-					"At least one InventoryMetric must be present");
+					"At least one metric must be present");
 		}
 	}
 
@@ -214,7 +288,7 @@ public class ConfigurationDispatcherBean implements
 		for (InventoryServiceInventoryNode sn : serviceNodes) {
 			String nodeName = sn.getInventoryNodeName();
 			if (nodeName == null || nodeName.isEmpty()) {
-				throw new ConfigException("InventoryNode name is null or empty");
+				throw new ConfigException("Node name is null or empty");
 			}
 
 			Map<String, Object> queryParams2 = new HashMap<String, Object>();
@@ -226,7 +300,7 @@ public class ConfigurationDispatcherBean implements
 							queryParams2);
 
 			if (result == null) {
-				log.error("InventoryNode not found, name:{}", nodeName);
+				log.error("Node not found, name:{}", nodeName);
 				throw new ConfigException("Node not found");
 			} else {
 				sn.setNode(result);
@@ -234,7 +308,7 @@ public class ConfigurationDispatcherBean implements
 
 			if (!inventoryNodeNames.add(nodeName)) {
 				throw new ConfigException(
-						"duplicated inventoryNode with name '" + nodeName + "'");
+						"duplicated node with name '" + nodeName + "'");
 			}
 		}
 	}
@@ -248,6 +322,7 @@ public class ConfigurationDispatcherBean implements
 				.getNamedQueryResultList(em,
 						InventoryService.QUERY_READ_ALL_SERVICES,
 						InventoryService.class);
+		
 
 		for (InventoryService service : listAllServices) {
 
@@ -255,6 +330,10 @@ public class ConfigurationDispatcherBean implements
 			ObjectMapper mapper = new ObjectMapper();
 
 			if (service != null) {
+				log.info("Service Name is  " + service.getName());
+				if (!service.getName().equals(MONITORING))  {
+				log.info("into if  != Monitoring");
+				
 				List<InventoryServiceInventoryNode> serviceNodes = service
 						.getInventoryNodes();
 
@@ -311,27 +390,31 @@ public class ConfigurationDispatcherBean implements
 						log.error(" finally ");
 					}
 				}
-			}
+			  
 			paramsScript = paramsScript + service.getName() + ","
 					+ service.getInterval() + " ";
+			
+				}
+			}
 		}
 		log.debug("paramsScript :" + paramsScript);
-		String cmd=null;
-		if (restart)
-		cmd = System.getProperty("jboss.server.config.dir") + "/../../../bin/changePrometheusFile.sh" + 
-				 " restart " + paramsScript;
-		else
-		cmd = System.getProperty("jboss.server.config.dir") + "/../../../bin/changePrometheusFile.sh" + 
-					 " norestart " + paramsScript;
+		if (paramsScript!=null) {
+			String cmd=null;
+			if (restart)
+				cmd = System.getProperty("jboss.server.config.dir") + "/../../../bin/changePrometheusFile.sh" + 
+						" restart " + paramsScript;
+			else
+				cmd = System.getProperty("jboss.server.config.dir") + "/../../../bin/changePrometheusFile.sh" + 
+						" norestart " + paramsScript;
 
-		log.debug("cmd :" + cmd);
-		if (OSUtils.isUnix()) {
-			OSUtils.executeShellCommandUnix(cmd);
-		} else {
-			log.debug("Windows");
-			OSUtils.executeShellCommand(cmd);
+			log.debug("cmd :" + cmd);
+			if (OSUtils.isUnix()) {
+				OSUtils.executeShellCommandUnix(cmd);
+			} else {
+				log.debug("Windows");
+				OSUtils.executeShellCommand("/tmp/changePrometheus.bat");
+			}
 		}
-
 	}
 
 	@Override
@@ -341,6 +424,11 @@ public class ConfigurationDispatcherBean implements
 		if (InventoryNode.class.isInstance(obj)) {
 			InventoryNode node = (InventoryNode) obj;
 			String nodeName = node.getName();
+			
+			if (nodeName.equals(MONITORING)) {
+				throw new ConfigException(
+						"Node Monitoring cannot be deleted");
+			}
 			Long counter = DBUtility
 					.getNamedQuerySingleResultByName(
 							em,
@@ -348,12 +436,17 @@ public class ConfigurationDispatcherBean implements
 							Long.class, nodeName);
 			if (counter > 0) {
 				throw new ConfigException(
-						"InventoryNode referenced by an InventoryService cannot be deleted!");
+						"Node referenced by a service cannot be deleted!");
 			}
 		}
 		if (InventoryMetric.class.isInstance(obj)) {
 			InventoryMetric metric = (InventoryMetric) obj;
 			String metricName = metric.getName();
+			
+			if (metricName.equals(MetricTypeEnum.NODE.toString())) {
+				throw new ConfigException(
+						"Metric NODE cannot be deleted");
+			}
 			Long counter = DBUtility
 					.getNamedQuerySingleResultByName(
 							em,
@@ -361,15 +454,25 @@ public class ConfigurationDispatcherBean implements
 							Long.class, metricName);
 			if (counter > 0) {
 				throw new ConfigException(
-						"InventoryMetric referenced by an InventoryService cannot be deleted!");
+						"Metric referenced by a service cannot be deleted!");
 			}
 		}
 
+		if (InventoryService.class.isInstance(obj)) {
+			InventoryService service = (InventoryService) obj;
+			String serviceName = service.getName();
+		
+			if (serviceName.equals(MONITORING)) {
+			throw new ConfigException(
+					"Service Monitoring cannot be deleted");
+			}
+		}
 		persistEntityOnDelete(obj);
 
-		if (InventoryService.class.isInstance(obj))
+		if (InventoryService.class.isInstance(obj)) {
 			regeneratePrometheusConfig(true);
-
+		}
+		
 		return obj;
 	}
 
@@ -384,6 +487,12 @@ public class ConfigurationDispatcherBean implements
 			InventoryService service = (InventoryService) obj;
 			if (service != null) {
 				if (service.getName() != null) {
+					
+					if (service.getName().equals(MONITORING)) {
+						log.error("Service identified by name {} cannot be updated!",
+								service.getName());
+						throw new ConfigException("Service Monitoring cannot be updated");
+					}
 					Map<String, Object> queryParams1 = new HashMap<String, Object>();
 					queryParams1.put("name", service.getName());
 

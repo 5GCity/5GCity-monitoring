@@ -174,7 +174,7 @@ $.Metric = {
 $.Metric.WS = {
 
 	create : function(inputData, successHandler, errorHandler, targetDom) {
-		console.log("CREATE");
+		//console.log("CREATE");
 		errorHandler = errorHandler || null;
 		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric',
 				inputData, successHandler, errorHandler, targetDom,
@@ -201,7 +201,7 @@ $.Metric.WS = {
 	},
 
 	template : function(successHandler, errorHandler, targetDom) {
-		console.log("TEMPLATE");
+		//console.log("TEMPLATE");
 		errorHandler = errorHandler || null;
 		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/metric/template',
 				successHandler, errorHandler, targetDom);

@@ -239,8 +239,24 @@ function getURLParameter(sParam) {
 	var sURLVariables = sPageURL.split('&');
 	for (var i = 0; i < sURLVariables.length; i++) {
 		var sParameterName = sURLVariables[i].split('=');
-		if (sParameterName[0] == sParam)
+		if (sParameterName[0] == sParam) 
 			return sParameterName[1];
+	}
+}
+
+function getDashBoardURL(sParam) {
+	var sPageURL = window.location.search.substring(1);
+
+	var sParameterName = sPageURL.split('=');
+	var sParameterTot = "";
+	if (sParameterName[0] == sParam) {
+		for (var i = 1; i < sParameterName.length; i++) {
+			sParameterTot += sParameterName[i];
+			if(i < (sParameterName.length-1)) {
+			  sParameterTot += '=';
+			}
+		}
+		return sParameterTot;
 	}
 }
 

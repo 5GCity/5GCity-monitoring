@@ -1,5 +1,6 @@
 package com.italtel.monitoring.fe.ws.inventory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -16,7 +17,9 @@ import com.italtel.monitoring.fe.entity.InventoryMetrics;
 import com.italtel.monitoring.fe.entity.InventoryNode;
 import com.italtel.monitoring.fe.entity.InventoryNodes;
 import com.italtel.monitoring.fe.entity.InventoryService;
+import com.italtel.monitoring.fe.entity.InventoryServiceInventoryNode;
 import com.italtel.monitoring.fe.entity.InventoryServices;
+import com.italtel.monitoring.fe.entity.PrometheusTarget;
 import com.italtel.monitoring.fe.utils.DBUtility;
 import com.italtel.monitoring.fe.ws.entity.Result;
 
@@ -349,7 +352,7 @@ public class InventoryWS implements InventoryWSInterface {
 			return new Result<InventoryNode>(e);
 		}
 	}
-
+	
 	/********************
 	 * InventoryMetric *
 	 ********************/
@@ -491,4 +494,51 @@ public class InventoryWS implements InventoryWSInterface {
 			return new Result<InventoryMetric>(e);
 		}
 	}
+
+	@Override
+	public Result<InventoryService> getServiceNameByNode(String name) {
+		
+		log.error("Request received: getServiceNameByNode name {}", name);
+
+		Result<InventoryService> result = new Result<InventoryService>(Result.OK_SUCCESS_CODE,
+				Result.OK_SUCCESS_MESSAGE,
+				null);
+
+		boolean serviceFind = false;
+		try {
+
+			List<InventoryService> inventoryServices = getAllServices();
+			for (InventoryService service : inventoryServices) {				
+				if (service != null) {
+					log.error("Service Name is  " + service.getName());
+
+					List<InventoryServiceInventoryNode> serviceNodes = service
+							.getInventoryNodes();
+
+					for (InventoryServiceInventoryNode sn : serviceNodes) {
+						InventoryNode nodeData = sn.getNode();
+						log.error("Node Name is  " + nodeData.getName());
+						if(nodeData.getName().equals(name)) {
+							log.error("Find Service Name " + service.getName());
+							// Success result
+							serviceFind = true;
+							result.setData(service);
+							break;
+						}
+					}
+				}
+			}
+			if (serviceFind == false) {
+				result.setData(null);
+			}
+
+		} catch (Exception e) {
+			log.error("Error reading InventoryService with name={}: {}", name,
+					e.getMessage());
+			// Error result
+			result = new Result<InventoryService>(e);
+		}
+		return result;
+	}
+	
 }

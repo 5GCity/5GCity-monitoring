@@ -1,3 +1,5 @@
+var nodeServiceList = [];
+
 $.Node = {
 	
 	listPageLink : 'configuration.jsp?operation=list&object=inventoryNode',
@@ -138,13 +140,18 @@ $.Node = {
 			boxcontent += '<div data-help-label="Port" data-help-key="port" />';
 			boxcontent += '<div data-help-label="Actions" data-help-key="actions" />';
 			boxcontent += '<table class="table table-hover table-striped"><thead><tr><th class="col-md-3">Name</th><th class="col-md-10">Ip Address</th><th class="col-md-3">Port</th><th class="col-md-3">Actions</th></tr></thead><tboby>';
-			$(inventoryNodes).each(
-					function() {
-						
+			$.Node.WS.getCachedNodeServiceList();
+			$(inventoryNodes).each(function() {
+					var service = nodeServiceList[this.name];
 					boxcontent += '<tr><td>' + this.name + '</td><td>' + this.ip + '</td><td>' + this.port + '</td>';
-						
+
+					if (typeof nodeServiceList[this.name] == 'undefined') {
+						service = '';
+					}
 					boxcontent += '<td><div class="inline-toolbar" data-target-name="' + this.name
-								+ '" data-target-object="inventoryNode"></div></td></tr>';
+								+ '" data-target-object="inventoryNode" data-service-name="' + service +'" ></div></td></tr>';
+					//console.log("boxcontent =", boxcontent);
+					
 					});
 			boxcontent += '</tbody><tfoot></tfoot></table>';
 		}
@@ -155,6 +162,7 @@ $.Node = {
 
 		$(targetDom).html(content);
 
+		inlineDashboardDetailButton('.inline-toolbar','/dashboard/db/detailsnode?refresh=1h&orgId=1&var-instance=');
 		inlineConfigViewButton('.inline-toolbar');
 		inlineConfirmDeleteButton('.inline-toolbar', targetDom,
 					$.Node.actionRemove);
@@ -180,7 +188,6 @@ $.Node = {
 $.Node.WS = {
 
 	create : function(inputData, successHandler, errorHandler, targetDom) {
-		console.log("Sono qui WS!");
 		errorHandler = errorHandler || null;
 		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
 				inputData, successHandler, errorHandler, targetDom,
@@ -188,7 +195,6 @@ $.Node.WS = {
 	},
 
 	list : function(successHandler, errorHandler, targetDom) {
-		console.log("Sono in list!");
 		errorHandler = errorHandler || null;
 		
 		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
@@ -211,6 +217,18 @@ $.Node.WS = {
 		errorHandler = errorHandler || null;
 		getValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node/template',
 				successHandler, errorHandler, targetDom);
+	},
+
+	getCachedNodeServiceList : function() {
+		var cacheService = Preloader.getResource('inventoryService').inventoryServices;
+		
+		$(cacheService).each(function() {
+			var service = this.name;
+			$(this.nodes).each(function() {
+				nodeServiceList[this.name] = service;
+			})
+		});
+		return $(cacheService);
 	},
 
 };
