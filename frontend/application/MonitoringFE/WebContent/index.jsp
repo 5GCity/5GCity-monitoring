@@ -43,8 +43,17 @@
 	<script src="jslib/jquery-1.11.3.min.js"></script>
 	<script >
        $(document).ready(function() {
-				var strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> +'/dashboard/db/summarynode?refresh=1h&orgId=1';
-				 $('#main-div').find('#myIframe').attr('src',strName);
+    	   
+    		    var strUrl = getDashBoardURL('dashboardUrl');
+    		    var strName = "";       
+    			if (strUrl == null) {
+    				strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> +'/dashboard/db/summarynode?refresh=1h&orgId=1';
+    			}
+    			else {
+    				strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> + strUrl;
+    			}
+    		    //console.log("strName : ",strName);
+				$('#main-div').find('#myIframe').attr('src',strName);
        });
     </script>
 </body>

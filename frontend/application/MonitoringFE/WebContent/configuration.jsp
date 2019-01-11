@@ -112,6 +112,9 @@
 				var resources = [ {
 					name : 'inventoryNode',
 					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
+				}, {
+					name : 'inventoryService',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/service'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
 					if (operation == 'read') {

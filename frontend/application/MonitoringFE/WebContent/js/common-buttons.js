@@ -195,6 +195,33 @@ function inlineExportButton(inlineTargetDom, exportUrl) {
 			});
 }
 
+function drawDashboardDetailButton(inlineTargetDom, dashbordUrl) {
+	$(inlineTargetDom)
+			.each(
+					function(idx) {
+						var name = $(this).attr('data-target-name');
+						var objType = $(this).attr('data-target-object');
+						var nameService = $(this).attr('data-service-name');
+						if(nameService != "") {
+						  var toolbarcontent = '<a class="btn btn-sm btn-default btn-flat" href="' + dashbordUrl + name + '&var-myservice=' + nameService + '" role="button"><span class="glyphicon glyphicon-dashboard"></span></a> ';
+						  $(this).append(toolbarcontent);
+						} else {
+							  var toolbarcontent = '<a class="btn btn-sm btn-default btn-flat disabled"  href="' + dashbordUrl + name + '&var-myservice=' + nameService + '" role="button"><span class="glyphicon glyphicon-dashboard"></span></a> ';
+							  $(this).append(toolbarcontent);
+						}
+					});
+}
+
+function drawDashboardSummaryButton(inlineTargetDom, dashbordUrl) {
+	$(inlineTargetDom)
+			.each(
+					function(idx) {
+						var name = $(this).attr('data-target-name');
+						var objType = $(this).attr('data-target-object');
+						var toolbarcontent = '<a class="btn btn-sm btn-default btn-flat" href="' + dashbordUrl + name +  '" role="button"><span class="glyphicon glyphicon-dashboard"></span></a> ';
+						$(this).append(toolbarcontent);
+					});
+}
 function drawInlineViewButton(inlineTargetDom, page) {
 	$(inlineTargetDom)
 			.each(
@@ -220,6 +247,12 @@ function drawInlineListDetailsButton(inlineTargetDom) {
 		);
 }
 
+function inlineDashboardDetailButton(inlineTargetDom,dashUrl) {
+	drawDashboardDetailButton(inlineTargetDom,'index.jsp?dashboardUrl='+dashUrl+'');
+}
+function inlineDashboardSummaryButton(inlineTargetDom,dashUrl) {
+	drawDashboardSummaryButton(inlineTargetDom,'index.jsp?dashboardUrl='+dashUrl+'');
+}
 function inlineConfigViewButton(inlineTargetDom) {
 	drawInlineViewButton(inlineTargetDom, 'configuration.jsp');
 }
