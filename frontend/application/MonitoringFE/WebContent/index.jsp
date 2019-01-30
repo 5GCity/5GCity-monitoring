@@ -43,17 +43,16 @@
 	<script src="jslib/jquery-1.11.3.min.js"></script>
 	<script >
        $(document).ready(function() {
-    	   
     		    var strUrl = getDashBoardURL('dashboardUrl');
     		    var strName = "";       
-    			if (strUrl == null) {
-    				strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> +'/dashboard/db/summarynode?refresh=1h&orgId=1';
-    			}
+    			if ((strUrl == null) || (strUrl == 'undefined')) {
+  			       window.location.href = 'http://' + window.location.hostname + ':' + window.location.port +'/FrontEnd/configuration.jsp?operation=list&object=inventoryService';
+     			}
     			else {
-    				strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> + strUrl;
+    			  strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> + strUrl;
+    			  //console.log("strName : ",strName);
+    			  $('#main-div').find('#myIframe').attr('src',strName);
     			}
-    		    //console.log("strName : ",strName);
-				$('#main-div').find('#myIframe').attr('src',strName);
        });
     </script>
 </body>

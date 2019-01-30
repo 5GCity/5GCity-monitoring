@@ -72,9 +72,6 @@
 		</div>
 	</div>
 	<jsp:include page="include/scripts.jsp" />
-	<script src="js/service.js"></script>
-	<script src="js/node.js"></script>
-	<script src="js/metric.js"></script>
 	<script type="text/javascript">
 	var operation;
 	var objectType;
