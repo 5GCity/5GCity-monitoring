@@ -140,7 +140,6 @@ $.Service = {
 		
 		var inListObj = {};
 		var nodes = Preloader.getResource('inventoryNode').nodes;
-		console.log("dopo preloader nodes :",nodes);
 		$(nodes).each(function(){
 			var name = this.name;
 			if(isNull(inListObj[name]))
@@ -155,7 +154,6 @@ $.Service = {
 		
 		var inListObj = {};
 		var metrics = Preloader.getResource('inventoryMetric').metrics;
-		console.log("dopo preloader metrics :",metrics);
 		$(metrics).each(function(){
 			var name = this.name;
 			if(isNull(inListObj[name]))
@@ -216,6 +214,7 @@ $.Service = {
 
 		$(targetDom).html(content);
 
+		inlineDashboardSummaryButton('.inline-toolbar','/dashboard/db/summarynode?refresh=1h&orgId=1&var-myservice=');
 		inlineConfigViewButton('.inline-toolbar');
 		inlineConfigUpdateButton('.inline-toolbar');
 		inlineConfirmDeleteButton('.inline-toolbar', targetDom,
@@ -363,12 +362,10 @@ $.Service.WS = {
 function metricListChange(service) {
 	
 	var totMetric = $('#edit-metric-list').find('div.row').length;
-	console.log("totMetric : ",totMetric);
 		
 	if (totMetric <= 1) {
 	
 		var btn = $('#edit-metric-list').find('span.glyphicon-minus').parent('button.btn');
-		console.log("btn : ",btn);
 		btn[0].disabled = true;
 	}
 	
@@ -378,12 +375,10 @@ function metricListChange(service) {
 function nodeListChange(service) {
 	
 	var totNode = $('#edit-node-list').find('div.row').length;
-	console.log("totNode : ",totNode);
 		
 	if (totNode <= 1) {
 	
 		var btn = $('#edit-node-list').find('span.glyphicon-minus').parent('button.btn');
-		console.log("btn : ",btn);
 		btn[0].disabled = true;
 	}
 	
@@ -403,7 +398,6 @@ function removableNodeName(service, nodeName, inputclass, readonly, hideLabels) 
 		});
 	});
 	nodeName = nodeName || "";
-	console.log("nodeNamesList : ",nodeNamesList);
 
 	var html = '';
 	html += '<div class="row ' + inputclass + '">';
@@ -417,7 +411,6 @@ function removableNodeName(service, nodeName, inputclass, readonly, hideLabels) 
 	html += '<label>&nbsp;</label>';
 	
 	$.serv = service;
-	console.log("serv : ",service);
 	html += '<div><button onclick="javascript: \
 						if($(\'#edit-node-list\').find(\'span.glyphicon-minus\').length > 1)\
 						{$(this).parent().parent().parent().remove();nodeListChange($.serv);}"\
@@ -440,8 +433,7 @@ function removableMetricName(service, metricName, inputclass, readonly, hideLabe
 		});
 	});
 	metricName = metricName || "";
-	console.log("metricNamesList : ",metricNamesList);
-	console.log("inputclass : ",inputclass);
+
 	var html = '';
 	html += '<div class="row ' + inputclass + '">';
 	html += '<div class="col-xs-6">';
@@ -454,7 +446,6 @@ function removableMetricName(service, metricName, inputclass, readonly, hideLabe
 	html += '<label>&nbsp;</label>';
 	
 	$.serv = service;
-	console.log("serv : ",service);
 	html += '<div><button onclick="javascript: \
 						if($(\'#edit-metric-list\').find(\'span.glyphicon-minus\').length > 1)\
 						{$(this).parent().parent().parent().remove();metricListChange($.serv);}"\

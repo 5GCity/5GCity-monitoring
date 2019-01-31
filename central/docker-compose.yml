@@ -1,8 +1,10 @@
-version: '3'
+version: '3.7'
 services:
 
   5GPrometheus:
     image: prom/prometheus:v2.3.2
+    container_name: 5GPrometheus
+    hostname: prometheus 
     volumes:
       - ./prometheus:/etc/prometheus/
       - 5Gpromdata:/prometheus
@@ -16,6 +18,8 @@ services:
 
   5GGrafana:
     image: grafana/grafana:5.2.4
+    container_name: 5GGrafana
+    hostname: grafana
     ports:
       - __GF_PORT_MON__:3000
     volumes:
@@ -31,6 +35,8 @@ services:
       - GF_PORT_MON=__GF_PORT_MON__
       - PM_PORT_MON=__PM_PORT_MON__
     image: jboss/wildfly:14.0.1.Final
+    container_name: 5GFrontend
+    hostname: frontend
     volumes:
       - ./frontend/deployments:/opt/jboss/wildfly/standalone/deployments
       - ./frontend/conf/:/opt/jboss/wildfly/standalone/conf

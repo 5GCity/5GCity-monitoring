@@ -165,4 +165,11 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryMetric> getInventoryMetricDefault();
 
+	@GET
+	@Path("/service/node/{name}")
+	@WebMethod(operationName = "getServiceNameByNode")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<InventoryService> getServiceNameByNode(@PathParam("name") @WebParam(
+			name = "name") String name);
 }

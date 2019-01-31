@@ -72,9 +72,6 @@
 		</div>
 	</div>
 	<jsp:include page="include/scripts.jsp" />
-	<script src="js/service.js"></script>
-	<script src="js/node.js"></script>
-	<script src="js/metric.js"></script>
 	<script type="text/javascript">
 	var operation;
 	var objectType;
@@ -112,6 +109,9 @@
 				var resources = [ {
 					name : 'inventoryNode',
 					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
+				}, {
+					name : 'inventoryService',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/service'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
 					if (operation == 'read') {
