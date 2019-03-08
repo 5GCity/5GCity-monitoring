@@ -50,10 +50,11 @@ b. Edit the file _`<pathBuild>`/5GCity-monitoring/conf/build/env.build.propertie
 - JBOSS_HOME=<(where you have installed wildfly-14.0.1.Final)>
 - JAVA_HOME=<(where there is jdk or jre 1.8)>
 	
-c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/target/tar/MONITORING-<DATE>.tar_ 
+c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/target/tar/MONITORING-<DATE>.tgz_ 
     	
 - _cd `<pathBuild>`/5GCity-monitoring_
 - _ant -buildfile build.xml targetMon_
+
 
 
 
@@ -66,42 +67,61 @@ c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/t
 
 ##### Dependencies
 
-Linux node exporter installed and run on target node 
+Last generated deliverable file must be available: MONITORING-<DATE>.tgz 
+(i.e. MONITORING-07-03-2019.tgz)
 
-- _cd `<pathRun>`_
-- _cp `<pathBuild>`/5GCity-monitoring/backend/prometheus/exporters/node_exporter-0\.16\.0\.linux-amd64\.tar\.gz \._
+
+##### Deployment Setup
+
+a. Untar file _MONITORING-`<DATE>`.tgz_  in a directory  (i.e. _/opt/monitoring_)
+    
+- _cd /opt/monitoring_
+- put in this directory the last deliverable file _MONITORING-`<DATE>`.tgz_
+- _tar xvfz `MONITORING-`<DATE>`.tgz_
+
+b. Install Linux node exporter and run it on test-bed target node
+
+- _mkdir /opt/exporters_
+- _cp /opt/monitoring/exporters/* /opt/exporters_
+- _cd /opt/exporters_
 - _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
 - _cd node_exporter-\*\.\*-amd64_
 - _./node_exporter &_
 
-NOTE:  Linux node exporter must be installed and running also on each node that must be monitored (you can also get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_)
 
-##### Deployment Setup
+c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.properties_ must contain the values for the ports used to run grafana(default=3000), prometheus(default=9090) and frontend application(default=8888)
 
-a. Untar file _MONITORING-`<DATE>`.tar_ generated in Build phase in a new directory  (i.e. _`<pathRun>`/mon_)
-    
-- _cd `<pathRun>`_
-- _mkdir mon_
-- _chmod 777 mon_
-- _cd mon_
-- _tar xvfz `<pathBuild>`/5GCity-monitoring/target/tar/MONITORING-`<DATE>`.tar_
-	
-b. (Mandatory only on first deployment) The file _`<pathRun>`/config\.properties_ must contain the values for the ports used to run grafana(default=3000), prometheus(default=9090) and frontend application(default=8888)
+- _cp /opt/monitoring/config\.properties\.sample /opt/monitoring/config\.properties_
 
-- _cp `<pathRun>`/config\.properties\.sample `<pathRun>`/config\.properties_
+d. (Optional) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
 
-c. (Optional) If you want to use ports'values different from default, please edit this file (_`<pathRun>`/config\.properties_) before to proceed with step d.
-
-d. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
+e. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
 	
 - _./install.sh `<IPAddressTarget>`_
 	
-e. Run command  docker-compose up  in background to startup 5G monitoring application
+f. Run command  docker-compose up  in background to startup 5G monitoring application
 
 - _docker-compose up -d_
 
-NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps c., d. and e. again.  
+NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps d., e. and f. again.  
  To shutdown the 5G monitoring application run the command: *docker-compose down*
+
+
+##### Deploy exporters on remote nodes
+
+Exporters must be installed and running on each remote node
+
+To deploy Linux node exporters and get system metrics:
+
+a. You can get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_) or you can find it on _/opt/monitoring/exporters_ so you can put this file on remote node on any directory
+
+b. Install on each remote node the Linux node exporter and run it 
+
+- Access to remote node and put the file _node_exporter-0.16.0.linux-amd64.tar.gz_ on any directory (e.g. `<anydir>`)
+- _cd `<anydir>`_
+- _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
+- _cd node_exporter-\*\.\*-amd64_
+- _./node_exporter &_
 
 		
 ## Usage
@@ -110,16 +130,14 @@ Once the Monitoring manager is running, please open in your browser the Monitori
 _http://`<IPAddressTarget>`:`<FrontEndPort>`/FrontEnd_
 (for example ->  http://10.10.10.10:8888/FrontEnd)
 
-The service "Monitoring" that it is associated to the  metric NODE and to the node of "Monitoring" itself with IP Address `<IPAddressTarget>` is already available in Monitoring WebGui
+The monitoring system is self-monitored through "monitoring" service.
 
-From Dashboard button on Service and or Node, you can see the dashboards SummaryNONE and DetailsNODE related on the service "Monitoring" and the node of "Monitoring" itself 
-
-You can add more services and their relative nodes from the Monitoring WebGUI application.
+You can add more services to monitor other remote nodes from the Monitoring WebGUI application or from available REST APIs.
 
 
 ## License
 
-The 5GCity monitoing is published under Apache 2.0 license.
+The 5GCity monitoring is published under Apache 2.0 license.
 Please see the LICENSE file for more details.
 
 
