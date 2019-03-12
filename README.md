@@ -96,6 +96,8 @@ c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.proper
 d. (Optional) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
 
 e. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
+
+ ___Please specify the natted ip address for _`<IPAddressTarget>`_, if any___
 	
 - _./install.sh `<IPAddressTarget>`_
 	
