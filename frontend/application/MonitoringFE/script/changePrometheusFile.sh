@@ -29,14 +29,17 @@ echo $# >> $LOGFILE
 
 while [ $i -le $# ]
 do
-        service=$(echo ${!i} | awk -F, '{print $1}')
+        job=$(echo ${!i} | awk -F, '{print $1}')
         interval=$(echo ${!i} | awk -F, '{print $2}')
-        echo "SERVIZIO $service" >> $LOGFILE
-        echo "INTERVALLO $interval" >> $LOGFILE
-        fileTemp=$PATH_TEMP_JOB/$service.json
+        path=$(echo ${!i} | awk -F, '{print $3}')
+        echo "JOB $job" >> $LOGFILE
+        echo "INTERVAL $interval" >> $LOGFILE
+        echo "PATH $path" >> $LOGFILE
+        fileTemp=$PATH_TEMP_JOB/$job.json
 	cp $FILE_TEMPLATE $fileTemp
-        sed -i s/__SERVICE__/$service/g $fileTemp
-        sed -i s/__INTERVAL__/$interval/g $fileTemp
+        sed -i s#__JOB__#$job#g $fileTemp
+        sed -i s#__INTERVAL__#$interval#g $fileTemp
+        sed -i s#__PATH__#$path#g $fileTemp
         cat $fileTemp >> $FILE_PROMETHEUS
 
         i=$(($i+1))

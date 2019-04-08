@@ -1,7 +1,7 @@
 var ws = null;
 
 try {
-	ws = new WebSocket("wss://" + document.location.host + "/Monitoring-WebGui/EndPoint");
+	ws = new WebSocket("wss://" + document.location.host + "/EndPoint");
 	ws.onmessage = function(event) {
 
 		var currCountAlarm = event.data;

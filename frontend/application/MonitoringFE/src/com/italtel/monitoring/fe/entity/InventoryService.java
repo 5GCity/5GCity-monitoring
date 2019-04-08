@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -36,7 +37,10 @@ import com.italtel.monitoring.fe.common.service.OMEntity;
 public class InventoryService implements OMEntity {
 
 	private static final long serialVersionUID = 59477811476005071L;
-
+	
+	public static final String DEF_SERVICE_MONITORING = "ServiceMonitoring";
+	public static final String DEF_SERVICE_DESCRIPTION ="Service that is related to the job Monitoring";
+	
 	public static final String QUERY_READ_SERVICE = "findServiceByName";
 	public static final String QUERY_READ_ALL_SERVICES = "findAllServices";
 
@@ -45,54 +49,18 @@ public class InventoryService implements OMEntity {
 
 	private String description;
 
-	private int interval;
-
-	@JsonProperty("nodes")
-	@XmlElementWrapper(name = "nodes")
-	@XmlElement(name = "node")
+	@XmlTransient
+	private String org;
+	
+	@JsonProperty("jobs")
+	@XmlElementWrapper(name = "jobs")
+	@XmlElement(name = "job")
 	@Fetch(FetchMode.SELECT)
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
 			orphanRemoval = true)
 	@JoinTable(schema = "MONITORING")
-	private List<InventoryServiceInventoryNode> inventoryNodes;
-
-	@JsonProperty("metrics")
-	@XmlElementWrapper(name = "metrics")
-	@XmlElement(name = "metric")
-	@Fetch(FetchMode.SELECT)
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-			orphanRemoval = true)
-	@JoinTable(schema = "MONITORING")
-	private List<InventoryServiceInventoryMetric> inventoryMetrics;
-
-	public List<InventoryServiceInventoryMetric> getInventoryMetrics() {
-		return inventoryMetrics;
-	}
-
-	public void setInventoryMetrics(
-			List<InventoryServiceInventoryMetric> inventoryMetrics) {
-		if (inventoryMetrics == null) {
-			inventoryMetrics = new ArrayList<InventoryServiceInventoryMetric>();
-		}
-		this.inventoryMetrics = inventoryMetrics;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public int getInterval() {
-		return interval;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setInterval(int interval) {
-		this.interval = interval;
-	}
-
+	private List<InventoryServiceJob> jobs;
+	
 	public String getName() {
 		return name;
 	}
@@ -101,24 +69,37 @@ public class InventoryService implements OMEntity {
 		this.name = name;
 	}
 
-	public List<InventoryServiceInventoryNode> getInventoryNodes() {
-		return inventoryNodes;
+	public List<InventoryServiceJob> getJobs() {
+		return jobs;
 	}
 
-	public void setInventoryNodes(
-			List<InventoryServiceInventoryNode> inventoryNodes) {
-		if (inventoryNodes == null) {
-			inventoryNodes = new ArrayList<InventoryServiceInventoryNode>();
+	public void setJobs(List<InventoryServiceJob> jobs) {
+		if (jobs == null) {
+			jobs = new ArrayList<InventoryServiceJob>();
 		}
-		this.inventoryNodes = inventoryNodes;
+		this.jobs = jobs;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getOrg() {
+		return org;
+	}
+
+	public void setOrg(String org) {
+		this.org = org;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("InventoryService [name=").append(name)
-		// .append(", inventoryMetrics=").append(metrics)
-				.append(", inventoryNodes=").append(inventoryNodes).append("]");
-		return builder.toString();
+		return "InventoryService [name=" + name + ", description=" + description + ", org=" + org + ", jobs=" + jobs
+				+ "]";
 	}
+	
 }

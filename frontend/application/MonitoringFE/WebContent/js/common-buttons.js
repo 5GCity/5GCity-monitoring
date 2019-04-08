@@ -1,21 +1,22 @@
 function inlineDeleteButton(inlineTargetDom, targetDom, actionCallback, confirmName) {
 	confirmName = confirmName || false;
 	$(inlineTargetDom)
-			.each(
-					function(idx) {
-						var name = $(this).attr('data-target-name');//abbey generalizzazione migliore della funzione di delete confirm
-						var deleteMsg = "Warning: are you sure you want to delete '<strong>"+confirmName ? '' : name+"</strong>'?";
-						var did = 'confirm-delete-' + idx;
+	.each(
+			function(idx) {
+				var name = $(this).attr('data-target-name');//abbey generalizzazione migliore della funzione di delete confirm
+				var deleteMsg = "Warning: are you sure you want to delete '<strong>"+confirmName ? '' : name+"</strong>'?";
+				var did = 'confirm-delete-' + idx;
+				if((name != "Monitoring") && (name != "ServiceMonitoring")) {
+					var toolbarcontent = ' <button class="btn btn-sm btn-danger btn-flat btn-delete" data-toggle="modal" data-target="#'
+						+ did + '" role="button"><span class="glyphicon glyphicon-trash"></span></button>';
+					toolbarcontent += confirmDialog(did, deleteMsg);
+					$(this).append(toolbarcontent);
 
-						var toolbarcontent = ' <button class="btn btn-sm btn-danger btn-flat btn-delete" data-toggle="modal" data-target="#'
-								+ did + '" role="button"><span class="glyphicon glyphicon-trash"></span></button>';
-						toolbarcontent += confirmDialog(did, deleteMsg);
-						$(this).append(toolbarcontent);
-
-						$('#' + did + ' .btn-confirm').click(function() {
-							actionCallback(name, targetDom);
-						});
+					$('#' + did + ' .btn-confirm').click(function() {
+						actionCallback(name, targetDom);
 					});
+				}
+			});
 }
 
 function cancelButton(targetDom, cancelUrl) {
@@ -134,10 +135,12 @@ function drawInlineUpdateButton(inlineTargetDom, name, objType, page) {
 			function(idx) {
 				var name = $(this).attr('data-target-name');
 				var objType = $(this).attr('data-target-object');
+
 				var toolbarcontent = '<a class="btn btn-sm btn-primary btn-flat" '
-						+ 'href="' + page + '?operation=edit&object=' + objType + '&name=' + name
-						+ '" role="button"><span class="glyphicon glyphicon-pencil"></span></a> ';
+					+ 'href="' + page + '?operation=edit&object=' + objType + '&name=' + name
+					+ '" role="button"><span class="glyphicon glyphicon-pencil"></span></a> ';
 				$(this).append(toolbarcontent);
+
 			});
 }
 
@@ -145,14 +148,29 @@ function inlineConfigUpdateButton(inlineTargetDom, name, objType) {
 	drawInlineUpdateButton(inlineTargetDom, name, objType, 'configuration.jsp');
 }
 
-function wizardProfileInlineUpdateButton(inlineTargetDom, name, objType) {
-	drawInlineUpdateButton(inlineTargetDom, name, objType, 'wizard-profile.jsp');
+function drawInlineUserUpdateButton(inlineTargetDom, name, objType, page) {
+	$(inlineTargetDom).each(
+			function(idx) {
+				var name = $(this).attr('data-target-name');
+				var objType = $(this).attr('data-target-object');
+				var toUpdate = $(this).attr('data-target-update');
+				if(toUpdate == "true") {
+					var toolbarcontent = '<a class="btn btn-sm btn-primary btn-flat" '
+						+ 'href="' + page + '?operation=edit&object=' + objType + '&name=' + name
+						+ '" role="button"><span class="glyphicon glyphicon-pencil"></span></a> ';
+					$(this).append(toolbarcontent);
+				} else {
+					var toolbarcontent = '<a class="btn btn-sm btn-primary btn-flat disabled" '
+						+ 'href="' + page + '?operation=edit&object=' + objType + '&name=' + name
+						+ '" role="button"><span class="glyphicon glyphicon-pencil"></span></a> ';
+					$(this).append(toolbarcontent);
+				}
+			});
 }
 
-function tracingInlineUpdateButton(inlineTargetDom, name, objType) {
-	drawInlineUpdateButton(inlineTargetDom, name, objType, 'tracing.jsp');
+function inlineUserUpdateButton(inlineTargetDom, name, objType) {
+	drawInlineUserUpdateButton(inlineTargetDom, name, objType, 'user-management.jsp');
 }
-
 
 function drawCreateButton(objType, domTarget, page) {
 	var content = '';
@@ -212,6 +230,52 @@ function drawDashboardDetailButton(inlineTargetDom, dashbordUrl) {
 					});
 }
 
+function drawDashboardGenericButton(inlineTargetDom) {
+	$(inlineTargetDom)
+	.each(
+			function(idx) {
+				var name = $(this).attr('data-target-name');
+				var objType = $(this).attr('data-target-object');				
+				var dashboardArray = $(this).data('dash-type').split(",");
+
+				var dLen, i;
+				dLen = dashboardArray.length;
+				console.log("dashboardArray lenght : ",dashboardArray.length);
+			
+				var toolbarcontent = '<div class="form-group">';
+				toolbarcontent += '<div class="input-group-btn">';
+				toolbarcontent += '<button type="button" class="btn btn-primary btn-sm dropdown-toggle" '
+						   + 'data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+						   +'<span class="currSel">Dashboard </span><span class="caret"></span></button>';
+				toolbarcontent += '<ul class="dropdown-menu" role="menu">';
+				
+				for (i = 0; i < dLen; i++) {
+					toolbarcontent += '<li><a href="#" id="' + name + '_' + dashboardArray[i] +'">'+ dashboardArray[i] +'</a></li>';
+				}
+
+				toolbarcontent += '</ul>';
+				toolbarcontent += '</div>';
+				$(this).append(toolbarcontent);				
+				
+			});
+	
+			$('#main-container').find('ul.dropdown-menu').find('a[href="#"]').click(function() {
+				//console.log($(this).attr('id'));
+		
+				var myNameId = $(this).attr('id').split("_");
+
+				if(myNameId[1] == "APACHE") {
+					var dashUrl = '/dashboard/db/apache?refresh=1h&orgId=1';
+					window.location.href = 'index.jsp?dashboardUrl=' + dashUrl + '';
+				} else if(myNameId[1] == "NODE") {
+					console.log("ho clickato NODE");
+					var dashUrl = '/dashboard/db/summarynode?refresh=1h&orgId=1&var-myservice2=';
+					window.location.href = 'index.jsp?dashboardUrl=' + dashUrl + myNameId[0] + '';
+				}
+			});
+
+}
+
 function drawDashboardSummaryButton(inlineTargetDom, dashbordUrl) {
 	$(inlineTargetDom)
 			.each(
@@ -222,6 +286,7 @@ function drawDashboardSummaryButton(inlineTargetDom, dashbordUrl) {
 						$(this).append(toolbarcontent);
 					});
 }
+
 function drawInlineViewButton(inlineTargetDom, page) {
 	$(inlineTargetDom)
 			.each(
@@ -247,8 +312,12 @@ function drawInlineListDetailsButton(inlineTargetDom) {
 		);
 }
 
+
 function inlineDashboardDetailButton(inlineTargetDom,dashUrl) {
 	drawDashboardDetailButton(inlineTargetDom,'index.jsp?dashboardUrl='+dashUrl+'');
+}
+function inlineDashboardGenericButton(inlineTargetDom) {
+  drawDashboardGenericButton(inlineTargetDom);
 }
 function inlineDashboardSummaryButton(inlineTargetDom,dashUrl) {
 	drawDashboardSummaryButton(inlineTargetDom,'index.jsp?dashboardUrl='+dashUrl+'');

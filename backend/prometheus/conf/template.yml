@@ -1,7 +1,8 @@
 
-  - job_name: '__SERVICE__'
+  - job_name: '__JOB__'
     scrape_interval: '__INTERVAL__s'
+    metrics_path: '__PATH__'
     file_sd_configs:
       - files:
-         - '/etc/prometheus/__SERVICE__.json'
+         - '/etc/prometheus/__JOB__.json'
 
