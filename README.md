@@ -115,7 +115,7 @@ Exporters must be installed and running on each remote node
 
 To deploy Linux node exporters and get system metrics:
 
-a. You can get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_) or you can find it on _/opt/monitoring/exporters_ so you can put this file on remote node on any directory
+. You can get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_) or you can find it on _/opt/monitoring/exporters/node_exporter-0.16.0.linux-amd64.tar.gz_ so you can put this file on remote node on any directory
 
 b. Install on each remote node the Linux node exporter and run it 
 
@@ -124,6 +124,32 @@ b. Install on each remote node the Linux node exporter and run it
 - _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
 - _cd node_exporter-\*\.\*-amd64_
 - _./node_exporter &_
+
+
+
+To deploy apache exporters and get apache metrics:
+
+a. You can find it on _/opt/monitoring/exporters/apache_exporter.tar.gz_ so you can put this file on remote node on any directory
+
+b. Install on each remote node the apache exporter and run it 
+
+- Access to remote node and put the file _apache_exporter.tar.gz_ on any directory (e.g. `<anydir>`)
+- _cd `<anydir>`_
+- _tar xvfz apache_exporter.tar.gz_
+- _cd apache_exporter_
+- _./apache_exporter &_
+
+Otherwise, valid ONLY for monitoring one only remote node from another "local node"
+
+a2. You can find apache exporter on _/opt/monitoring/exporters/apache_exporter.tar.gz_ so you can put this file on local node on any directory
+
+b2. Install on the local node the apache exporter and run it to scrape only one remote node:
+
+- Access to local node and put the file _apache_exporter.tar.gz_ on any directory (e.g. `<anydir>`)
+- _cd `<anydir>`_
+- _tar xvfz apache_exporter.tar.gz_
+- _cd apache_exporter_
+- _./apache_exporter -scrape_uri "http://<remoteNodeIPAddress>/server-status/?auto" &_
 
 		
 ## Usage
