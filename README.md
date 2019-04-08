@@ -139,7 +139,7 @@ b. Install on each remote node the apache exporter and run it
 - _cd apache_exporter_
 - _./apache_exporter &_
 
-Otherwise, valid ONLY for monitoring one only remote node from another "node"
+Otherwise, valid ONLY for monitoring one only remote node from another "local node"
 
 a2. You can find apache exporter on _/opt/monitoring/exporters/apache_exporter.tar.gz_ so you can put this file on local node on any directory
 
