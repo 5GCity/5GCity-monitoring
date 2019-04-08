@@ -63,7 +63,6 @@ $.Service = {
 
 	displayCreatePage : function(data, targetDom) {
 		var service = data.data;
-
 		setPageTitle("Create Service");
 		setActiveMenu('menu_service');
 
@@ -86,6 +85,7 @@ $.Service = {
 	},
 
 	displayFormData : function(service, targetDom, update, readonly) {
+		
 		update = update || false;
 		readonly = readonly || false;
 		var content = '';
@@ -106,62 +106,37 @@ $.Service = {
 		boxgeneral += '<div class="form-group data-input-l1" ><label>Description</label>';
 		boxgeneral += inputText('description', service.description);
 		boxgeneral += '</div>';
-		boxgeneral += '<div id="edit-interval" class="form-group data-input-l1"><label>Interval</label>';
-		boxgeneral += inputNumber('interval', service.interval);
-		boxgeneral += '</div>';
 
 		content += condensedBoxPrimary('Settings', boxgeneral);
 
 		content += '</div>';
 		
-		var boxNodeList = '';
-		boxNodeList += '<div class="form-group data-input-array data-input-l1" data-inputname="nodes">';
-		boxNodeList += '<div id="edit-node-list" class="inline-condensed"></div>';
-		boxNodeList += '</div>';
+		var boxJobList = '';
+		boxJobList += '<div class="form-group data-input-array data-input-l1" data-inputname="jobs">';
+		boxJobList += '<div id="edit-job-list" class="inline-condensed"></div>';
+		boxJobList += '</div>';
 		
-		content += '<div class="col-md-6">';
-		content += condensedBoxPrimary('Node List', boxNodeList);
+		content += '<div class="col-md-4">';
+		content += condensedBoxPrimary('Job List', boxJobList);
 		content += '</div>';
 		
-		var boxMetricList = '';
-		boxMetricList += '<div class="form-group data-input-array data-input-l1" data-inputname="metrics">';
-		boxMetricList += '<div id="edit-metric-list" class="inline-condensed"></div>';
-		boxMetricList += '</div>';
-		
-		content += '<div class="col-md-6">';
-		content += condensedBoxPrimary('Metric List', boxMetricList);
-		content += '</div>';		
 		content += '</form>';
 
 		$(targetDom).html(content);
 		
-		$.Service.adjustNodeList(service, readonly);
-		nodeListChange(service);
+		$.Service.adjustJobList(service, readonly);
+		jobListChange(service);
 		
 		var inListObj = {};
-		var nodes = Preloader.getResource('inventoryNode').nodes;
-		$(nodes).each(function(){
+		var jobs = Preloader.getResource('job').jobs;
+		$(jobs).each(function(){
 			var name = this.name;
 			if(isNull(inListObj[name]))
 				inListObj[name] = this;
 		});
 		
-		$('#edit-node-list select').change();		
-		
-		// METRIC
-		$.Service.adjustMetricList(service, readonly);
-		metricListChange(service);
-		
-		var inListObj = {};
-		var metrics = Preloader.getResource('inventoryMetric').metrics;
-		$(metrics).each(function(){
-			var name = this.name;
-			if(isNull(inListObj[name]))
-				inListObj[name] = this;
-		});
-		
-		$('#edit-metric-list select').change();
-		
+		$('#edit-job-list select').change();		
+				
 		if (readonly) {
 			setReadOnlyForm($(targetDom));
 		}
@@ -174,8 +149,19 @@ $.Service = {
 
 	},
 	
+	getDashTypeByJob : function(myjob) { 
+		var jobs = Preloader.getResource('job').jobs;
+		var type = "";
+		$(jobs).each(
+				function() {
+					if(this.name == myjob) {
+						type = this.jobSource.dashboardType;			
+					}
+				});	
+		return type;
+	},
+	
 	displayListPage : function(data, targetDom) {
-
 		var inventoryServices = data.data.inventoryServices;
 		
 		var count = $(inventoryServices).length;
@@ -194,27 +180,38 @@ $.Service = {
 		} else {
 			boxcontent += '<div data-help-label="Name" data-help-key="name" />';
 			boxcontent += '<div data-help-label="Description" data-help-key="description" />';
-			boxcontent += '<div data-help-label="Interval" data-help-key="interval" />';
 			boxcontent += '<div data-help-label="Actions" data-help-key="actions" />';
-			boxcontent += '<table class="table table-hover table-striped"><thead><tr><th class="col-md-3">Name</th><th class="col-md-10">Description</th><th class="col-md-3">Interval</th><th class="col-md-3">Actions</th></tr></thead><tboby>';
+			boxcontent += '<table class="table table-hover table-striped"><thead><tr><th class="col-md-3">Name</th><th class="col-md-10">Description</th><th class="col-md-3">Actions</th></tr></thead><tboby>';
+			
 			$(inventoryServices).each(
 					function() {
-						
-					boxcontent += '<tr><td>' + this.name + '</td><td>' + this.description + '</td><td>' + this.interval + '</td>';
-						
+						boxcontent += '<tr><td>' + this.name + '</td><td>' + this.description + '</td>';
+						var myjobs = this.jobs;
+						var jobDashTypeList = [];
+						$(myjobs).each(
+								function() {
+									var jobInservice = this.name;
+									$.Service.WS.getCachedJobList().each(function() {
+										if(this.name == jobInservice) {
+											var sn = this.jobSource.dashboardType;
+											if(jobDashTypeList.indexOf(sn) == -1)
+											   jobDashTypeList.push(sn);
+										}
+									});
+								});
+						console.log("jobDashTypeList :",jobDashTypeList);
 					boxcontent += '<td><div class="inline-toolbar" data-target-name="' + this.name
-								+ '" data-target-object="inventoryService"></div></td></tr>';
+					+ '" data-target-object="Service" data-dash-type="' + jobDashTypeList +'" ></div></td></tr>';
 					});
 			boxcontent += '</tbody><tfoot></tfoot></table>';
 		}
-
 		content += condensedBoxPrimary('Service <span class="badge">'
 				+ count + '</span>', boxcontent);
 		content += '</div>';
 
 		$(targetDom).html(content);
 
-		inlineDashboardSummaryButton('.inline-toolbar','/dashboard/db/summarynode?refresh=1h&orgId=1&var-myservice=');
+		inlineDashboardGenericButton('.inline-toolbar');
 		inlineConfigViewButton('.inline-toolbar');
 		inlineConfigUpdateButton('.inline-toolbar');
 		inlineConfirmDeleteButton('.inline-toolbar', targetDom,
@@ -236,67 +233,32 @@ $.Service = {
 		$.Service.help();
 	},
 
-	adjustNodeList : function(service, readonly) {
+	adjustJobList : function(service, readonly) {
 		readonly = readonly || false;
 		var content = '';
 		if (!readonly) {
-			if($(service.nodes).length > 0) {
-				$(service.nodes).each(function(indexInArray, value) {
-					content += removableNodeName(service,value.name, 'data-input-l2');
+			if($(service.jobs).length > 0) {
+				$(service.jobs).each(function(indexInArray, value) {
+					content += removableJobName(service,value.name, 'data-input-l2');
 				});
 			} else {
-				content += removableNodeName(service, null, 'data-input-l2');
+				content += removableJobName(service, null, 'data-input-l2');
 			}
 			content += '<button type="button" class="btn btn-default btn-sm btn-block btn-add"><span class="glyphicon glyphicon-plus"></span> Add</button>';
 		} else {
-			$(service.nodes).each(function(indexInArray, value) {
-				content += removableNodeName(service, value.name, 'data-input-l2', readonly);
+			$(service.jobs).each(function(indexInArray, value) {
+				content += removableJobName(service, value.name, 'data-input-l2', readonly);
 			});
 		}
-		$('#edit-node-list').html(content);
+		$('#edit-job-list').html(content);
 
 		if (!readonly) {
-			$('#edit-node-list').find('button.btn-add').click(function() {
+			$('#edit-job-list').find('button.btn-add').click(function() {
 				
-				$(this).before('' + removableNodeName(service, null, 'data-input-l2'));
-				nodeListChange(service);
+				$(this).before('' + removableJobName(service, null, 'data-input-l2'));
+				jobListChange(service);
 				
 				var selectList = $('#edit-node-list select');
-				var lastSelectAdded = selectList[selectList.length-1];
-				$(lastSelectAdded).change(function(){
-					$.lastSelectChanged = this;
-				});
-				$(lastSelectAdded).change();
-			});
-		}
-	},
-
-	adjustMetricList : function(service, readonly) {
-		readonly = readonly || false;
-		var content = '';
-		if (!readonly) {
-			if($(service.metrics).length > 0) {
-				$(service.metrics).each(function(indexInArray, value) {
-					content += removableMetricName(service,value.name, 'data-input-l2');
-				});
-			} else {
-				content += removableMetricName(service, null, 'data-input-l2');
-			}
-			content += '<button type="button" class="btn btn-default btn-sm btn-block btn-add"><span class="glyphicon glyphicon-plus"></span> Add</button>';
-		} else {
-			$(service.metrics).each(function(indexInArray, value) {
-				content += removableMetricName(service, value.name, 'data-input-l2', readonly);
-			});
-		}
-		$('#edit-metric-list').html(content);
-
-		if (!readonly) {
-			$('#edit-metric-list').find('button.btn-add').click(function() {
-				
-				$(this).before('' + removableMetricName(service, null, 'data-input-l2'));
-				metricListChange(service);
-				
-				var selectList = $('#edit-metric-list select');
 				var lastSelectAdded = selectList[selectList.length-1];
 				$(lastSelectAdded).change(function(){
 					$.lastSelectChanged = this;
@@ -348,37 +310,20 @@ $.Service.WS = {
 					successHandler, errorHandler, targetDom);
 		},
 
-		getCachedInventoryNodeList : function() {
-			var cacheNode = Preloader.getResource('inventoryNode').inventoryNodes;
-			return $(cacheNode);
+		getCachedJobList : function() {
+			var cacheJob = Preloader.getResource('job').jobs;
+			return $(cacheJob);
 		},
 		
-		getCachedInventoryMetricList : function() {
-			var cacheMetric = Preloader.getResource('inventoryMetric').inventoryMetrics;
-			return $(cacheMetric);
-		}
 };
 
-function metricListChange(service) {
+function jobListChange(service) {
 	
-	var totMetric = $('#edit-metric-list').find('div.row').length;
+	var totJob = $('#edit-job-list').find('div.row').length;
 		
-	if (totMetric <= 1) {
+	if (totJob <= 1) {
 	
-		var btn = $('#edit-metric-list').find('span.glyphicon-minus').parent('button.btn');
-		btn[0].disabled = true;
-	}
-	
-	$.Service.help();
-};
-
-function nodeListChange(service) {
-	
-	var totNode = $('#edit-node-list').find('div.row').length;
-		
-	if (totNode <= 1) {
-	
-		var btn = $('#edit-node-list').find('span.glyphicon-minus').parent('button.btn');
+		var btn = $('#edit-job-list').find('span.glyphicon-minus').parent('button.btn');
 		btn[0].disabled = true;
 	}
 	
@@ -386,25 +331,31 @@ function nodeListChange(service) {
 };
 
 
-function removableNodeName(service, nodeName, inputclass, readonly, hideLabels) {
+function removableJobName(service, jobName, inputclass, readonly, hideLabels) {
 	readonly = readonly || false;
-	var nodeNamesList = [];
-	$.Service.WS.getCachedInventoryNodeList().each(function() {
-		var sn = this.name + ' - ' + this.ip + ':' + this.port;
+	var jobNamesList = [];
+	var jobTypeList = [];
+	$.Service.WS.getCachedJobList().each(function() {
+			var sn = this.name;
 
-		nodeNamesList.push({
-			'value' : this.name,
-			'label' : sn
-		});
+			jobNamesList.push({
+				'value' : this.name,
+				'label' : sn
+			});
+			var jb = this.name;
+			jobTypeList.push({
+				'value' : this.jobSource.dashboardType,
+				'label' : jb
+			});
 	});
-	nodeName = nodeName || "";
+	jobName = jobName || "";
 
 	var html = '';
 	html += '<div class="row ' + inputclass + '">';
-	html += '<div class="col-xs-6">';
+	html += '<div class="col-xs-10">';
 	
 	html += '<label>Name</label>';
-	html += dynamicSelect('name', nodeName, nodeNamesList);
+	html += dynamicSelect('name', jobName, jobNamesList);
 	html += '</div>';
 
 	html += '<div class="col-xs-2">';
@@ -412,44 +363,10 @@ function removableNodeName(service, nodeName, inputclass, readonly, hideLabels) 
 	
 	$.serv = service;
 	html += '<div><button onclick="javascript: \
-						if($(\'#edit-node-list\').find(\'span.glyphicon-minus\').length > 1)\
-						{$(this).parent().parent().parent().remove();nodeListChange($.serv);}"\
+						if($(\'#edit-job-list\').find(\'span.glyphicon-minus\').length > 1)\
+						{$(this).parent().parent().parent().remove();jobListChange($.serv);}"\
 			 class="btn btn-default btn-flat btn-sm pull-right" type="button"><span class="glyphicon glyphicon-minus"></span></button></div>';
-	html += '</div>';
-	html += '</div>';
-	return html;
-};
 
-function removableMetricName(service, metricName, inputclass, readonly, hideLabels) {
-	readonly = readonly || false;
-	var metricNamesList = [];
-	$.Service.WS.getCachedInventoryMetricList().each(function() {
-		
-		var sm = this.name;
-		
-		metricNamesList.push({
-			'value' : this.name,
-			'label' : sm
-		});
-	});
-	metricName = metricName || "";
-
-	var html = '';
-	html += '<div class="row ' + inputclass + '">';
-	html += '<div class="col-xs-6">';
-	
-	html += '<label>Name</label>';
-	html += dynamicSelect('name', metricName, metricNamesList);
-	html += '</div>';
-
-	html += '<div class="col-xs-2">';
-	html += '<label>&nbsp;</label>';
-	
-	$.serv = service;
-	html += '<div><button onclick="javascript: \
-						if($(\'#edit-metric-list\').find(\'span.glyphicon-minus\').length > 1)\
-						{$(this).parent().parent().parent().remove();metricListChange($.serv);}"\
-			 class="btn btn-default btn-flat btn-sm pull-right" type="button"><span class="glyphicon glyphicon-minus"></span></button></div>';
 	html += '</div>';
 	html += '</div>';
 	return html;

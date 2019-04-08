@@ -59,7 +59,7 @@
                 </authentication>
                 <authorization>
                     <properties path="application-roles.properties" relative-to="jboss.server.config.dir"/>
-                </authorization>
+                </authorization>                
             </security-realm>
         </security-realms>
         <audit-log>
@@ -191,6 +191,10 @@
                 <stateful default-access-timeout="5000" cache-ref="simple" passivation-disabled-cache-ref="simple"/>
                 <singleton default-access-timeout="5000"/>
             </session-bean>
+            <mdb>
+				<resource-adapter-ref resource-adapter-name="${ejb.resource-adapter-name:activemq-ra.rar}" />
+				<bean-instance-pool-ref pool-name="mdb-strict-max-pool" />
+			</mdb>
             <pools>
                 <bean-instance-pools>
                     <strict-max-pool name="mdb-strict-max-pool" derive-size="from-cpu-count" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
@@ -416,6 +420,21 @@
         <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
         <subsystem xmlns="urn:jboss:domain:security:2.0">
             <security-domains>
+				<security-domain name="omDomain" cache-type="default">
+					<authentication>
+						<login-module
+							code="com.italtel.monitoring.fe.security.CustomDatabaseServerLoginModule" flag="required">
+							<module-option name="dsJndiName" value="java:jboss/datasources/H2DS" />
+							<module-option name="principalsQuery"
+								value="select passwd from MONITORING.USER where username=?" />
+							<module-option name="rolesQuery"
+								value="select role, 'Roles' from MONITORING.USER where username=?" />
+							<module-option name="hashAlgorithm" value="SHA-256" />
+							<module-option name="hashEncoding" value="BASE64" />
+							<module-option name="principalClass" value="com.italtel.monitoring.fe.security.CustomPrincipal" />
+						</login-module>						
+					</authentication>
+				</security-domain>
                 <security-domain name="other" cache-type="default">
                     <authentication>
                         <login-module code="Remoting" flag="optional">
@@ -465,7 +484,7 @@
         <subsystem xmlns="urn:jboss:domain:undertow:7.0" default-server="default-server" default-virtual-host="default-host" default-servlet-container="default" default-security-domain="other">
             <buffer-cache name="default"/>
             <server name="default-server">
-                <http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"/>
+                <http-listener name="default" socket-binding="http" enable-http2="true"/>
                 <https-listener name="https" socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-content"/>
@@ -473,6 +492,7 @@
                 </host>
             </server>
             <servlet-container name="default">
+            	<session-cookie http-only="true" secure="true" />
                 <jsp-config/>
                 <websockets/>
             </servlet-container>

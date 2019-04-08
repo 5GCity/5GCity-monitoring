@@ -97,9 +97,6 @@ $.Node = {
 		boxgeneral += '<div class="form-group data-input-l1" ><label>Ip Address</label>';
 		boxgeneral += inputText('ip', inventoryNode.ip);
 		boxgeneral += '</div>';
-		boxgeneral += '<div id="edit-port" class="form-group data-input-l1"><label>Port</label>';
-		boxgeneral += inputNumber('port', inventoryNode.port);
-		boxgeneral += '</div>';
 
 		content += condensedBoxPrimary('Settings', boxgeneral);
 
@@ -137,13 +134,12 @@ $.Node = {
 		} else {
 			boxcontent += '<div data-help-label="Name" data-help-key="name" />';
 			boxcontent += '<div data-help-label="Ip Address" data-help-key="ip" />';
-			boxcontent += '<div data-help-label="Port" data-help-key="port" />';
 			boxcontent += '<div data-help-label="Actions" data-help-key="actions" />';
-			boxcontent += '<table class="table table-hover table-striped"><thead><tr><th class="col-md-3">Name</th><th class="col-md-10">Ip Address</th><th class="col-md-3">Port</th><th class="col-md-3">Actions</th></tr></thead><tboby>';
+			boxcontent += '<table class="table table-hover table-striped"><thead><tr><th class="col-md-3">Name</th><th class="col-md-10">Ip Address</th><th class="col-md-3">Actions</th></tr></thead><tboby>';
 			$.Node.WS.getCachedNodeServiceList();
 			$(inventoryNodes).each(function() {
 					var service = nodeServiceList[this.name];
-					boxcontent += '<tr><td>' + this.name + '</td><td>' + this.ip + '</td><td>' + this.port + '</td>';
+					boxcontent += '<tr><td>' + this.name + '</td><td>' + this.ip + '</td>';
 
 					if (typeof nodeServiceList[this.name] == 'undefined') {
 						service = '';
@@ -162,7 +158,8 @@ $.Node = {
 
 		$(targetDom).html(content);
 
-		inlineDashboardDetailButton('.inline-toolbar','/dashboard/db/detailsnode?refresh=1h&orgId=1&var-instance=');
+//		inlineDashboardDetailButton('.inline-toolbar','/dashboard/db/detailsnode?refresh=1h&orgId=1&var-instance=');
+//		inlineDashboardGenericButton('.inline-toolbar');
 		inlineConfigViewButton('.inline-toolbar');
 		inlineConfirmDeleteButton('.inline-toolbar', targetDom,
 					$.Node.actionRemove);

@@ -93,6 +93,11 @@
 				<fileset dir="${source.frontend}/script"/>
 		</copy>
 		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/standalone.xml" tofile="${prod.frontend}/conf/standalone-mon.xml" overwrite="true" />
+		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/logback.xml" tofile="${prod.frontend}/conf/logback.xml" overwrite="true" />
+		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/mgmt-users.properties" tofile="${prod.frontend}/conf/mgmt-users.properties" overwrite="true" />
+		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/om.jks" tofile="${prod.frontend}/conf/om.jks" overwrite="true" />
+		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/fileDashboardType.txt" tofile="${prod.frontend}/conf/fileDashboardType.txt" overwrite="true" />
+
 		<copy todir="${prod.frontend}/deployments" overwrite="true">
 								<fileset dir="${source.frontend}/dist/JBOSS/standalone/deployments"/>
 		</copy>

@@ -1,5 +1,7 @@
 var _BASE_WEB_ROOT = '/FrontEnd/rest';
 var _CONF_SERVICES = '/fe';
+var _UM_SERVICES = '/um';
+var _UMSO_SERVICES = '/umso';
 var CONSOLE_DEBUG = false;
 var NULL_TOKEN = '#NULL#';
 var subnets = {};
