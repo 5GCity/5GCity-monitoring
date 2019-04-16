@@ -95,11 +95,12 @@ c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.proper
 
 d. (Optional) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
 
-e. Run the install.sh script with parameter _`<IPAddressTarget>`_ = Management IP address of the your's test-bed target
-
- ___Please specify the natted ip address for _`<IPAddressTarget>`_, if any___
+e. Run the install.sh script : 
+_`<ManagementIPAddress>`_ = Management IP address of the your's test-bed target
+_`<NATIPAddress>`_ = NAT Management IP address of the your's test-bed target, if any
 	
-- _./install.sh `<IPAddressTarget>`_
+- _./install.sh `<ManagementIPAddress>` [`<NATIPAddress>`]_
+
 	
 f. Run command  docker-compose up  in background to startup 5G monitoring application
 
@@ -139,7 +140,7 @@ b. Install on each remote node the apache exporter and run it
 - _cd apache_exporter_
 - _./apache_exporter &_
 
-Otherwise, valid ONLY for monitoring one only remote node from another "local node"
+Otherwise, valid ONLY for monitoring one only remote node from another "node"
 
 a2. You can find apache exporter on _/opt/monitoring/exporters/apache_exporter.tar.gz_ so you can put this file on local node on any directory
 
