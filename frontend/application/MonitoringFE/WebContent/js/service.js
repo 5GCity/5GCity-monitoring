@@ -273,14 +273,14 @@ $.Service.WS = {
 
 		update : function(inputData, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
+			putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
 					inputData, successHandler, errorHandler, targetDom,
 					'modal-body');
 		},
 
 		create : function(inputData, successHandler, errorHandler, targetDom) {
 			errorHandler = errorHandler || null;
-			putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
+			postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/service',
 					inputData, successHandler, errorHandler, targetDom,
 					'modal-body');
 		},

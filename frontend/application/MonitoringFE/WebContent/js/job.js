@@ -311,14 +311,14 @@ $.Job.WS = {
 
 	create : function(inputData, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/job',
+		postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/job',
 				inputData, successHandler, errorHandler, targetDom,
 				'modal-body');
 	},
 
 	update : function(inputData, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/job',
+		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/job',
 				inputData, successHandler, errorHandler, targetDom,
 				'modal-body');
 	},
