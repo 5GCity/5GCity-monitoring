@@ -269,7 +269,7 @@ function drawDashboardGenericButton(inlineTargetDom) {
 					window.location.href = 'index.jsp?dashboardUrl=' + dashUrl + '';
 				} else if(myNameId[1] == "NODE") {
 					console.log("ho clickato NODE");
-					var dashUrl = '/dashboard/db/summarynode?refresh=1h&orgId=1&var-myservice2=';
+					var dashUrl = '/dashboard/db/node-view?refresh=1h&orgId=1&var-service=';
 					window.location.href = 'index.jsp?dashboardUrl=' + dashUrl + myNameId[0] + '';
 				}
 			});

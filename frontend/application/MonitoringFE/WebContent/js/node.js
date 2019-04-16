@@ -186,7 +186,7 @@ $.Node.WS = {
 
 	create : function(inputData, successHandler, errorHandler, targetDom) {
 		errorHandler = errorHandler || null;
-		putValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
+		postValues(_BASE_WEB_ROOT + _CONF_SERVICES + '/node',
 				inputData, successHandler, errorHandler, targetDom,
 				'modal-body');
 	},

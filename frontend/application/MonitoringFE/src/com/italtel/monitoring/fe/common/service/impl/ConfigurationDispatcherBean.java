@@ -271,10 +271,18 @@ public class ConfigurationDispatcherBean implements
 				}
 				manageNodesInJob(job);
 				Source jobSource = job.getJobSource();
+				if (jobSource == null) {
+					jobSource = new Source();
+					job.setJobSource(jobSource);
+				}
+				if (jobSource.getSourceType() == null) {
+					jobSource.setSourceType(SourceTypeEnum.EXPORTER);
+				}
 				log.debug("create ConfigurationDispatcherBean Source Type "+jobSource.getSourceType().toString());
 				if(jobSource.getDashboardType() == null) {
-					throw new ConfigException(
-							"DashboardType cannot be null");
+//					throw new ConfigException(
+//							"DashboardType cannot be null");
+					jobSource.setDashboardType("NODE");
 				}
 				if(jobSource.getPort() != null) {
 					if ((jobSource.getPort() < 0) || (jobSource.getPort() > Source.DEF_SOURCE_MAX_PORT)) {
@@ -299,6 +307,9 @@ public class ConfigurationDispatcherBean implements
 							"Job interval cannot be null");
 				}
 				// check source data
+				if (jobSource.getMetricPath() == null) {
+					jobSource.setMetricPath("/metrics");
+				}
 			}
 		}
 

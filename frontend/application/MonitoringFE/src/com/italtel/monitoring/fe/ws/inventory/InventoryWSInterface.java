@@ -42,7 +42,7 @@ public interface InventoryWSInterface {
 	 * InventoryService *
 	 ********************/
 
-	@PUT
+	@POST
 	@Path("/service")
 	@WebMethod(operationName = "createService")
 	@WebResult(name = "return")
@@ -80,7 +80,7 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> getInventoryServiceDefault();
 
-	@POST
+	@PUT
 	@Path("/service")
 	@WebMethod(operationName = "updateService")
 	@WebResult(name = "return")
@@ -92,7 +92,7 @@ public interface InventoryWSInterface {
 	 * Slice *
 	 ********************/
 
-	@PUT
+	@POST
 	@Path("/slice")
 	@WebMethod(operationName = "createSlice")
 	@WebResult(name = "return")
@@ -130,7 +130,7 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<Slice> getSliceDefault();
 
-	@POST
+	@PUT
 	@Path("/slice")
 	@WebMethod(operationName = "updateSlice")
 	@WebResult(name = "return")
@@ -142,7 +142,7 @@ public interface InventoryWSInterface {
 	/********************
 	 * InventoryNode *
 	 ********************/
-	@PUT
+	@POST
 	@Path("/node")
 	@WebMethod(operationName = "createNode")
 	@WebResult(name = "return")
@@ -191,7 +191,7 @@ public interface InventoryWSInterface {
 	/********************
 	 * JOB              *
 	 ********************/
-	@PUT
+	@POST
 	@Path("/job")
 	@WebMethod(operationName = "createJob")
 	@WebResult(name = "return")
@@ -229,7 +229,7 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<Job> getJobDefault();
 
-	@POST
+	@PUT
 	@Path("/job")
 	@WebMethod(operationName = "updateJob")
 	@WebResult(name = "return")
