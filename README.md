@@ -96,11 +96,12 @@ c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.proper
 d. (Optional) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
 
 e. Run the install.sh script : 
-_`<ManagementIPAddress>`_ = Management IP address of the your's test-bed target
-_`<NATIPAddress>`_ = NAT Management IP address of the your's test-bed target, if any
 	
 - _./install.sh `<ManagementIPAddress>` [`<NATIPAddress>`]_
 
+where
+_`<ManagementIPAddress>`_ = Management IP address of the your's test-bed target
+and _`<NATIPAddress>`_ = NAT Management IP address of the your's test-bed target, if any.
 	
 f. Run command  docker-compose up  in background to startup 5G monitoring application
 
