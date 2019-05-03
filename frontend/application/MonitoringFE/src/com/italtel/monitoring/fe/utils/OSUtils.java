@@ -153,4 +153,11 @@ public class OSUtils {
       return grPort;
 	}
 
+	public static String getHostIp() {
+		  String monitoringIp=null;
+		  monitoringIp = System.getenv("HOST_MON");
+
+		  log.debug("monitoringIp " + monitoringIp);
+	      return monitoringIp;
+		}
 }

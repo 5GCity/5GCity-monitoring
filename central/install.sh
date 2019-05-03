@@ -4,7 +4,7 @@ LOGFILE=/tmp/logScript.txt
 
 rm -f $LOGFILE
 
-if [ $# -ne 1 ];
+if [ $# -lt 1 ];
 then echo "Missing Ip Address"
 exit 1
 fi
@@ -17,6 +17,8 @@ fi
 source config.properties
 
 HOST_MON=$1
+EXT_HOST_MON=$2
+[[ "x$EXT_HOST_MON" == "x" ]] && EXT_HOST_MON=$HOST_MON
 echo $HOST_MON >> $LOGFILE
 
 cp ./prometheus/prometheus.yml.base.orig ./prometheus/prometheus.yml.base
@@ -24,7 +26,7 @@ cp ./grafana/provisioning/datasources/all.yml.orig ./grafana/provisioning/dataso
 cp ./docker-compose.yml.orig ./docker-compose.yml
 
 sed -i s/__HOST_MON__/$HOST_MON/g prometheus/prometheus.yml.base
-sed -i s/__HOST_MON__/$HOST_MON/g grafana/provisioning/datasources/all.yml
+sed -i s/__HOST_MON__/$EXT_HOST_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__HOST_MON__/$HOST_MON/g docker-compose.yml
 sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g docker-compose.yml

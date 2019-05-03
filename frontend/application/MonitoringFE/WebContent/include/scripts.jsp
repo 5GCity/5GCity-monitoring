@@ -31,11 +31,50 @@
 <script src="js/common.js"></script>
 <script src="js/common-buttons.js"></script>
 <script src="js/bootstrap-switch.js"></script>
+<script src="js/configuration-types.js"></script>
+<script src="js/user-management.js"></script>
+<script src="js/service.js"></script>
+<script src="js/node.js"></script>
+<script src="js/job.js"></script>
+<script src="js/slice.js"></script>
+
 <script>
 	$(document).ready(function() {
 		var url = window.location.pathname.toLowerCase();
 		if(url.match(/\.jsp$/) != null && !(url.match(/index\.jsp$/) != null)) {
 			console.log("fault error")
-		}
+		}		
 	});
+	$(".sidebar-toggle").on("click", function() {
+		$.ajax({
+			url : '/um?collapsed=toggle',
+			type : 'GET',
+			// contentType : 'application/json',
+			// dataType : 'json',
+			// data : null,
+			cache : false,
+			// success : function(data) {},
+			// error : function(obj, status, text) {},
+			// complete : function() {},
+			async : true,
+		});
+	});
+
+<!--
+	$(".sidebar-toggle").on("click", function() {
+		$.ajax({
+			url : '/FrontEnd/sm?collapsed=toggle',
+			type : 'GET',
+			// contentType : 'application/json',
+			// dataType : 'json',
+			// data : null,
+			cache : false,
+			// success : function(data) {},
+			// error : function(obj, status, text) {},
+			// complete : function() {},
+			async : true,
+		});
+	});
+-->
+
 </script>

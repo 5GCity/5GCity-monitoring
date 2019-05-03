@@ -41,12 +41,23 @@
 	</div>
 	<jsp:include page="include/scripts.jsp" />
 	<script src="jslib/jquery-1.11.3.min.js"></script>
+ 
 	<script >
        $(document).ready(function() {
-				var strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> +'/dashboard/db/summarynode?refresh=1h&orgId=1';
-				 $('#main-div').find('#myIframe').attr('src',strName);
+    		    var strUrl = getDashBoardURL('dashboardUrl');
+    		    var strName = "";       
+    			if ((strUrl == null) || (strUrl == 'undefined')) {
+    				console.log("href : ");
+  			       window.location.href = 'http://' + window.location.hostname + ':' + window.location.port +'/FrontEnd/configuration.jsp?operation=list&object=inventoryService';
+     			}
+    			else {
+    			  strName = 'http://' + window.location.hostname + ':' + <%=portGrafana%> + strUrl;
+    			  console.log("strName : ",strName);
+    			  $('#main-div').find('#myIframe').attr('src',strName);
+    			}
        });
     </script>
+   
 </body>
 </html>
 
