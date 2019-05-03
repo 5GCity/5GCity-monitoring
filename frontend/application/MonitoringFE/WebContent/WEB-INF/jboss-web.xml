@@ -1,0 +1,3 @@
+<jboss-web>
+	<security-domain>omDomain</security-domain>
+</jboss-web>

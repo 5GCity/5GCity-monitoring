@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": 718,
   "graphTooltip": 0,
-  "iteration": 1545389790366,
+  "iteration": 1551453930051,
   "links": [
     {
       "asDropdown": true,
@@ -39,7 +39,7 @@
         "rgba(50, 172, 45, 0.97)"
       ],
       "datasource": "prom1",
-      "description": "OK if host is properly monitored, KO otherwise",
+      "description": "OK if node is properly monitored, KO otherwise",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -118,7 +118,7 @@
         }
       ],
       "thresholds": "0.5, 0.8",
-      "title": "Host Monitoring Status",
+      "title": "Node Monitoring Status",
       "type": "singlestat",
       "valueFontSize": "70%",
       "valueMaps": [
@@ -1176,11 +1176,11 @@
         "datasource": "prom1",
         "hide": 0,
         "includeAll": false,
-        "label": "Service",
+        "label": "Job",
         "multi": false,
         "name": "myservice",
         "options": [],
-        "query": "up{metricGroup=\"NODE\"}",
+        "query": "up{type=\"NODE\"}",
         "refresh": 1,
         "regex": ".*job=\"(.*?)\".*",
         "sort": 0,

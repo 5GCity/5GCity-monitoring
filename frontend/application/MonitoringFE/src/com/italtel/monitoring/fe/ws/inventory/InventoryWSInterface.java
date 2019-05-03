@@ -1,5 +1,7 @@
 package com.italtel.monitoring.fe.ws.inventory;
 
+import java.util.List;
+
 import javax.ejb.Local;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -14,12 +16,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.italtel.monitoring.fe.entity.InventoryMetric;
-import com.italtel.monitoring.fe.entity.InventoryMetrics;
+import com.italtel.monitoring.fe.entity.DashboardTypes;
 import com.italtel.monitoring.fe.entity.InventoryNode;
 import com.italtel.monitoring.fe.entity.InventoryNodes;
 import com.italtel.monitoring.fe.entity.InventoryService;
 import com.italtel.monitoring.fe.entity.InventoryServices;
+import com.italtel.monitoring.fe.entity.Job;
+import com.italtel.monitoring.fe.entity.Jobs;
+import com.italtel.monitoring.fe.entity.Slice;
+import com.italtel.monitoring.fe.entity.Slices;
 import com.italtel.monitoring.fe.ws.entity.Result;
 
 @Path("/fe")
@@ -27,17 +32,17 @@ import com.italtel.monitoring.fe.ws.entity.Result;
 @WebService
 public interface InventoryWSInterface {
 
-//	@GET
-//	@Path("/test")
-//	@WebMethod(operationName = "test")
-//	@WebResult(name = "return")
-//	public String test();
+	@GET
+	@Path("/test")
+	@WebMethod(operationName = "test")
+	@WebResult(name = "return")
+	public String test();
 
 	/********************
 	 * InventoryService *
 	 ********************/
 
-	@PUT
+	@POST
 	@Path("/service")
 	@WebMethod(operationName = "createService")
 	@WebResult(name = "return")
@@ -75,7 +80,7 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryService> getInventoryServiceDefault();
 
-	@POST
+	@PUT
 	@Path("/service")
 	@WebMethod(operationName = "updateService")
 	@WebResult(name = "return")
@@ -84,9 +89,60 @@ public interface InventoryWSInterface {
 			name = "service") InventoryService inventoryService);
 
 	/********************
+	 * Slice *
+	 ********************/
+
+	@POST
+	@Path("/slice")
+	@WebMethod(operationName = "createSlice")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Slice> createSlice(@WebParam(
+			name = "slice") Slice slice);
+
+	@GET
+	@Path("/slice/{name}")
+	@WebMethod(operationName = "getSlice")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Slice> getSlice(
+			@PathParam("name") @WebParam(name = "name") String name);
+
+	@DELETE
+	@Path("/slice/{name}")
+	@WebMethod(operationName = "deleteSlice")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<?> deleteSlice(@PathParam("name") @WebParam(
+			name = "name") String name);
+
+	@GET
+	@Path("/slice")
+	@WebMethod(operationName = "listSlices")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Slices> listSlices();
+
+	@GET
+	@Path("/slice/template")
+	@WebMethod(operationName = "getSliceDefault")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Slice> getSliceDefault();
+
+	@PUT
+	@Path("/slice")
+	@WebMethod(operationName = "updateSlice")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Slice> updateSlice(@WebParam(
+			name = "slice") Slice slice);
+
+
+	/********************
 	 * InventoryNode *
 	 ********************/
-	@PUT
+	@POST
 	@Path("/node")
 	@WebMethod(operationName = "createNode")
 	@WebResult(name = "return")
@@ -124,52 +180,68 @@ public interface InventoryWSInterface {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<InventoryNode> getInventoryNodeDefault();
 
-	/********************
-	 * InventoryMetric *
-	 ********************/
-	@PUT
-	@Path("/metric")
-	@WebMethod(operationName = "createMetric")
+	@GET
+	@Path("/service/job/{name}")
+	@WebMethod(operationName = "getServiceNameByJob")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<InventoryMetric> createInventoryMetric(@WebParam(
-			name = "metric") InventoryMetric inventoryMetric);
+	public Result<InventoryService> getServiceNameByJob(@PathParam("name") @WebParam(
+			name = "name") String name);
+	
+	/********************
+	 * JOB              *
+	 ********************/
+	@POST
+	@Path("/job")
+	@WebMethod(operationName = "createJob")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<Job> createJob(@WebParam(
+			name = "job") Job job);
 
 	@GET
-	@Path("/metric/{name}")
-	@WebMethod(operationName = "getMetric")
+	@Path("/job/{name}")
+	@WebMethod(operationName = "getJob")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<InventoryMetric> getInventoryMetric(
+	public Result<Job> getJob(
 			@PathParam("name") @WebParam(name = "name") String name);
 
 	@DELETE
-	@Path("/metric/{name}")
-	@WebMethod(operationName = "deleteMetric")
+	@Path("/job/{name}")
+	@WebMethod(operationName = "deleteJob")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<?> deleteInventoryMetric(@PathParam("name") @WebParam(
+	public Result<?> deleteJob(@PathParam("name") @WebParam(
 			name = "name") String name);
 
 	@GET
-	@Path("/metric")
-	@WebMethod(operationName = "listMetrics")
+	@Path("/job")
+	@WebMethod(operationName = "listJobs")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<InventoryMetrics> listInventoryMetrics();
+	public Result<Jobs> listJobs();
 
 	@GET
-	@Path("/metric/template")
-	@WebMethod(operationName = "getMetricDefault")
+	@Path("/job/template")
+	@WebMethod(operationName = "getJobDefault")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<InventoryMetric> getInventoryMetricDefault();
+	public Result<Job> getJobDefault();
 
-	@GET
-	@Path("/service/node/{name}")
-	@WebMethod(operationName = "getServiceNameByNode")
+	@PUT
+	@Path("/job")
+	@WebMethod(operationName = "updateJob")
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Result<InventoryService> getServiceNameByNode(@PathParam("name") @WebParam(
-			name = "name") String name);
+	public Result<Job> updateJob(@WebParam(
+			name = "job") Job job);
+	
+	@GET
+	@Path("/job/dashboardType")
+	@WebMethod(operationName = "listDashboardType")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<DashboardTypes> listDashboardType();
+	
 }
