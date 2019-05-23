@@ -72,6 +72,7 @@
 		</div>
 	</div>
 	<jsp:include page="include/scripts.jsp" />
+
 	<script type="text/javascript">
 	var operation;
 	var objectType;
@@ -85,11 +86,8 @@
 			if ((objectType == 'inventoryService') || (objectType == 'Service')) {
 
 				var resources = [ {
-					name : 'inventoryNode',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
-				}, {
-					name : 'inventoryMetric',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/metric'
+					name : 'job',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/job'
 				}, {
 					name : 'inventoryService',
 					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/service'
@@ -105,7 +103,27 @@
 						$.Service.listPage();
 					}
 				});
-			} else 	if ((objectType == 'inventoryNode') || (objectType == 'Node')){
+			} else if ((objectType == 'slice') || (objectType == 'Slice')) {
+
+				var resources = [ {
+					name : 'inventoryNode',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
+				},{
+					name : 'slice',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/slice'
+				}];
+				Preloader.loadCustomResources(resources).then(function() {
+					if (operation == 'read') {
+						$.Slice.readPage(objectName);
+					} else if (operation == 'create') {
+						$.Slice.createPage();
+					} else if (operation == 'edit') {
+						$.Slice.updatePage(objectName);
+					} else if (operation == 'list') {
+						$.Slice.listPage();
+					}
+				});
+			} else if ((objectType == 'inventoryNode') || (objectType == 'Node')){
 				var resources = [ {
 					name : 'inventoryNode',
 					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
@@ -122,21 +140,30 @@
 						$.Node.listPage();
 					}
 				});
-			} else if ((objectType == 'inventoryMetric') || (objectType == 'Metric')) {
-				var resources = [{
-					name : 'inventoryMetric',
-					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/metric'
+			} else if ((objectType == 'job') || (objectType == 'Job')){
+				var resources = [ {
+					name : 'job',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/job'
+				}, {
+					name : 'inventoryNode',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/node'
+				}, {
+					name : 'dashboardType',
+					uri : _BASE_WEB_ROOT + _CONF_SERVICES + '/job/dashboardType'
 				}];
 				Preloader.loadCustomResources(resources).then(function() {
+					console.log("in preloader")
 					if (operation == 'read') {
-						$.Metric.readPage(objectName);
+						$.Job.readPage(objectName);
 					} else if (operation == 'create') {
-						$.Metric.createPage();
+						$.Job.createPage();
+					} else if (operation == 'edit') {
+						$.Job.updatePage(objectName);
 					} else if (operation == 'list') {
-						$.Metric.listPage();
+						$.Job.listPage();
 					}
 				});
-			}
+			} 
 		});
 		</script>
 </body>

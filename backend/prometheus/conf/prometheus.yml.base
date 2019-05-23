@@ -20,5 +20,7 @@ scrape_configs:
     static_configs:
     - targets: ['__HOST_MON__:9100']
       labels:
-        metricGroup: NODE
+        service: ServiceMonitoring
         instance: Monitoring
+        org: SYSMONITORING
+        type: NODE
