@@ -10,8 +10,10 @@
 	<property name="prod.frontend" value="${prod.root.release}/frontend" />
 	<property name="prod.exporters" value="${prod.root.release}/exporters" />
 	<property name="prod.grafana" value="${prod.root.release}/grafana" />
+	<property name="prod.alertmanager" value="${prod.root.release}/alertmanager" />
 	<property name="source.root" value="${basedir}" />
 	<property name="source.prometheus" value="${source.root}/backend/prometheus" />
+	<property name="source.alertmanager" value="${source.root}/backend/alertmanager" />
 	<property name="source.frontend" value="${source.root}/frontend/application/MonitoringFE" />
 	<property name="source.grafana" value="${source.root}/visualization/grafana" />
 	<property name="source.central" value="${source.root}/central" />
@@ -45,6 +47,8 @@
 		<mkdir dir="${prod.exporters}" />
 		<mkdir dir="${prod.grafana}" />
 		<mkdir dir="${prod.frontend}" />
+		<mkdir dir="${prod.alertmanager}" />
+		<mkdir dir="${prod.alertmanager}/config" />
 		<mkdir dir="${prod.grafana}/plugins" />
 		<mkdir dir="${prod.grafana}/dashboards" />
 		<mkdir dir="${prod.grafana}/provisioning" />
@@ -81,6 +85,10 @@
 				<fileset dir="${source.grafana}/conf"/>
 		</copy>
 		
+		<copy todir="${prod.alertmanager}/config" overwrite="true">
+				<fileset dir="${source.alertmanager}/conf"/>
+		</copy>		
+		
 		<copy todir="${prod.prometheus}" overwrite="true">
 				<fileset dir="${source.prometheus}/conf"/>
 		</copy>
@@ -99,7 +107,7 @@
 		<copy file="${source.frontend}/dist/JBOSS/standalone/configuration/fileDashboardType.txt" tofile="${prod.frontend}/conf/fileDashboardType.txt" overwrite="true" />
 
 		<copy todir="${prod.frontend}/deployments" overwrite="true">
-								<fileset dir="${source.frontend}/dist/JBOSS/standalone/deployments"/>
+				<fileset dir="${source.frontend}/dist/JBOSS/standalone/deployments"/>
 		</copy>
 
 		<copy file="${source.prometheus}/conf/prometheus.yml.base" tofile="${prod.prometheus}/prometheus.yml.base.orig" overwrite="true" />

@@ -8,9 +8,13 @@ global:
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-  #  - "alert.rules"
-  # - "first_rules.yml"
-  # - "second_rules.yml"
+ - basicrules.yml
+ - alertrules/*.yml
+          
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['__HOST_MON__:__AM_PORT_MON__']  
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -24,3 +28,5 @@ scrape_configs:
         instance: Monitoring
         org: SYSMONITORING
         type: NODE
+    
+        

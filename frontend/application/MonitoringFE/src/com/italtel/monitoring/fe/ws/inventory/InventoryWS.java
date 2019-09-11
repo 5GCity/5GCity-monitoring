@@ -2,26 +2,23 @@ package com.italtel.monitoring.fe.ws.inventory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
-import org.jboss.ejb3.annotation.SecurityDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.italtel.monitoring.fe.common.service.ConfigurationDispatcherService;
 import com.italtel.monitoring.fe.common.service.conf.wrte.CommonConfService;
+import com.italtel.monitoring.fe.entity.AlertRule;
+import com.italtel.monitoring.fe.entity.AlertRules;
 import com.italtel.monitoring.fe.entity.DashboardType;
 import com.italtel.monitoring.fe.entity.DashboardTypes;
 import com.italtel.monitoring.fe.entity.InventoryNode;
@@ -789,6 +786,15 @@ public class InventoryWS extends BaseWS implements InventoryWSInterface {
 		}
 		return job;
 	}
+	
+	public AlertRule getSingleAlertRule(String name,Boolean toSkip) {
+		AlertRule alertRule = DBUtility
+				.getNamedQuerySingleResultByName(
+						confService.getEntityManager(),
+						AlertRule.QUERY_READ_ALERTRULE,
+						AlertRule.class, name);
+		return alertRule;
+	}	
 
 	@Override
 //	@RolesAllowed({ "SYSTEM_ADMIN", "ADMIN" })
@@ -983,4 +989,123 @@ public class InventoryWS extends BaseWS implements InventoryWSInterface {
 			return new Result<DashboardTypes>(e);
 		}
 	}
+
+	@Override
+	public Result<AlertRule> createAlertRule(AlertRule alertRule) {
+		Result<AlertRule> result;
+		log.info("Request received: createAlertRule {}",
+				alertRule);
+
+		try {
+			if (alertRule.getName() != null) {
+				log.debug("AlertRule created (name={})",
+						alertRule.getName());
+				AlertRule tmprule = getSingleAlertRule(alertRule
+						.getName(),true);
+				if (tmprule != null) {
+					throw new Exception("alertrule " + tmprule.getName()
+							+ " already exists");
+				}
+			}
+
+			AlertRule alertRuleNew = confService
+					.create(alertRule);
+			// Success result
+			result = new Result<AlertRule>();
+			result.setCode(Result.OK_SUCCESS_CODE);
+			result.setMessage(Result.OK_SUCCESS_MESSAGE);
+			result.setData(alertRuleNew);
+		} catch (Exception e) {
+			log.error("Error creating a {}: {}", alertRule,
+					e.getMessage());
+			// Error result
+			result = new Result<AlertRule>(e);
+		}
+		return result;
+	}
+
+	@Override
+	public Result<AlertRule> getAlertRule(String name) {
+		log.info("Request received: getAlertRule name {}", name);
+		Result<AlertRule> result;
+		try {
+			// Read
+			AlertRule alertrule = DBUtility
+					.getNamedQuerySingleResultByName(
+							confService.getEntityManager(),
+							AlertRule.QUERY_READ_ALERTRULE,
+							AlertRule.class, name);
+			if (alertrule == null) {
+				throw new Exception("AlertRule " + name
+						+ " does not exist");
+			}
+			// Success result
+			result = new Result<AlertRule>();
+			result.setCode(Result.OK_SUCCESS_CODE);
+			result.setMessage(Result.OK_SUCCESS_MESSAGE);
+			result.setData(alertrule);
+		} catch (Exception e) {
+			log.error("Error reading Slice with name={}: {}", name,
+					e.getMessage());
+
+			// Error result
+			result = new Result<AlertRule>(e);
+		}
+		return result;
+	}
+
+	@Override
+	public Result<?> deleteAlertRule(String name) {
+		Result<?> result;
+
+		log.info("Request received: deleteAlertRule name={}", name);
+
+		try {
+			// get + delete
+			AlertRule alertRule = DBUtility
+					.getNamedQuerySingleResultByName(
+							confService.getEntityManager(),
+							AlertRule.QUERY_READ_ALERTRULE,
+							AlertRule.class, name);
+			if (alertRule != null) {
+				confService.delete(alertRule);
+			}
+			// Success result
+			result = new Result<Object>();
+			result.setCode(Result.OK_SUCCESS_CODE);
+			result.setMessage(Result.OK_SUCCESS_MESSAGE);
+		} catch (Exception e) {
+			log.error("Error deleting InventoryNode with name={}: {}", name,
+					e.getMessage());
+
+			// Error result
+			result = new Result<Object>(e);
+		}
+		return result;
+	}
+
+	@Override
+	public Result<AlertRules> listAlertRules() {
+		
+		log.info("Request received: listAlertRules");
+		try {
+			// Read
+			List<AlertRule> alertRules = DBUtility
+					.getNamedQueryResultList(confService.getEntityManager(),
+							AlertRule.QUERY_READ_ALL_ALERTRULES,
+							AlertRule.class);
+			return new Result<AlertRules>(Result.OK_SUCCESS_CODE,
+					Result.OK_SUCCESS_MESSAGE, new AlertRules(
+							alertRules));
+
+		} catch (Exception e) {
+			log.error("Error reading listInventoryServices {}", e.getMessage());
+
+			// Error result
+			return new Result<AlertRules>(e);
+		}
+		
+	}
+	
+	
 }
