@@ -7,6 +7,14 @@ PM_PORT_MON=9090
 # Grafana port
 GF_PORT_MON=3000
 
+# Alertmanager
+AM_PORT_MON=9093
+
+# Dashboard URL
+DASHBOARD_URL=http://127.0.0.1/test/dashboard
+
 export FE_PORT_MON
 export PM_PORT_MON
 export GF_PORT_MON
+export AM_PORT_MON
+export DASHBOARD_URL

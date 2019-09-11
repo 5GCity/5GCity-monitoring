@@ -26,12 +26,15 @@ cp ./grafana/provisioning/datasources/all.yml.orig ./grafana/provisioning/dataso
 cp ./docker-compose.yml.orig ./docker-compose.yml
 
 sed -i s/__HOST_MON__/$HOST_MON/g prometheus/prometheus.yml.base
+sed -i s/__AM_PORT_MON__/$AM_PORT_MON/g prometheus/prometheus.yml.base
 sed -i s/__HOST_MON__/$EXT_HOST_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g grafana/provisioning/datasources/all.yml
 sed -i s/__HOST_MON__/$HOST_MON/g docker-compose.yml
 sed -i s/__PM_PORT_MON__/$PM_PORT_MON/g docker-compose.yml
 sed -i s/__FE_PORT_MON__/$FE_PORT_MON/g docker-compose.yml
 sed -i s/__GF_PORT_MON__/$GF_PORT_MON/g docker-compose.yml
+sed -i s/__AM_PORT_MON__/$AM_PORT_MON/g docker-compose.yml
+sed -i s#__DASHBOARD_URL__#$DASHBOARD_URL#g alertmanager/config/alertmanager.yml.base
 			
 if [ ! -d ./frontend/database ]; then
   echo "not exist database" >> $LOGFILE
@@ -49,4 +52,10 @@ if [ ! -e ./frontend/deployments/FRONTEND.ear.dodeploy ]; then
   echo "not exist FRONTEND.ear.dodeploy" >> $LOGFILE
   touch ./frontend/deployments/FRONTEND.ear.dodeploy
   chmod 777 ./frontend/deployments/FRONTEND.ear.dodeploy
+fi
+
+if [ ! -e ./alertmanager/config/alertmanager.yml ]; then
+  echo "not exist prometheus.yml" >> $LOGFILE
+  cp ./alertmanager/config/alertmanager.yml.base ./alertmanager/config/alertmanager.yml
+  chmod 777 ./alertmanager/config/alertmanager.yml
 fi 

@@ -1,0 +1,14 @@
+groups:
+- name: 5GCity
+  rules:
+  
+  - alert: '__ALERTNAME__'
+    expr: '__EXPRESSION__'
+    for: '__DURATION__'
+    labels:
+      severity: '__SEVERITY__'
+    annotations:
+      summary: "__SUMMARY__"
+      description: "__DESCRIPTION__"
+
+
