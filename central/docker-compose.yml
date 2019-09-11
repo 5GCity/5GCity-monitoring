@@ -15,6 +15,19 @@ services:
       - '--storage.tsdb.retention=1d'
     ports:
       - __PM_PORT_MON__:9090
+      
+  5GAlertmanager:
+    image: prom/alertmanager:v0.19.0
+    container_name: 5GAlertmanager
+    hostname: alertmanager
+    volumes:
+      - ./alertmanager/config:/prometheus
+      - ./alertmanager/data:/data
+    command:
+      - '--config.file=/prometheus/alertmanager.yml'
+      - '--storage.path=/data'
+    ports:
+      - __AM_PORT_MON__:9093     
 
   5GGrafana:
     image: grafana/grafana:5.2.4

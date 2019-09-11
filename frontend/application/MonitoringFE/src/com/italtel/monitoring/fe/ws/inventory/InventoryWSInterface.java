@@ -1,7 +1,5 @@
 package com.italtel.monitoring.fe.ws.inventory;
 
-import java.util.List;
-
 import javax.ejb.Local;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -16,6 +14,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.italtel.monitoring.fe.entity.AlertRule;
+import com.italtel.monitoring.fe.entity.AlertRules;
 import com.italtel.monitoring.fe.entity.DashboardTypes;
 import com.italtel.monitoring.fe.entity.InventoryNode;
 import com.italtel.monitoring.fe.entity.InventoryNodes;
@@ -243,5 +243,40 @@ public interface InventoryWSInterface {
 	@WebResult(name = "return")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Result<DashboardTypes> listDashboardType();
+	
+	/********************
+	 * ALERT            *
+	 ********************/
+	@POST
+	@Path("/alertrule")
+	@WebMethod(operationName = "createAlertRule")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<AlertRule> createAlertRule(@WebParam(
+			name = "alert") AlertRule alertRule);
+
+	@GET
+	@Path("/alertrule/{name}")
+	@WebMethod(operationName = "getAlertRule")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<AlertRule> getAlertRule(
+			@PathParam("name") @WebParam(name = "name") String name);
+
+	@DELETE
+	@Path("/alertrule/{name}")
+	@WebMethod(operationName = "deleteAlertRule")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<?> deleteAlertRule(@PathParam("name") @WebParam(
+			name = "name") String name);
+
+	@GET
+	@Path("/alertrule")
+	@WebMethod(operationName = "listAlertRules")
+	@WebResult(name = "return")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Result<AlertRules> listAlertRules();
+
 	
 }

@@ -1,0 +1,44 @@
+{
+	"receiver": "dashboard",
+	"status": "firing",
+	"alerts": [
+		{
+			"status": "firing",
+			"labels": {
+				"alertname": "InstanceDown",
+				"instance": "Monitoring",
+				"job": "Monitoring",
+				"org": "SYSMONITORING",
+				"service": "ServiceMonitoring",
+				"severity": "critical",
+				"type": "NODE"
+			},
+			"annotations": {
+				"description": "Monitoring of job Monitoring has been down for more than 5 minutes.",
+				"summary": "Instance Monitoring down"
+			},
+			"startsAt": "2019-08-28T14:44:00.520693759Z",
+			"endsAt": "0001-01-01T00:00:00Z",
+			"generatorURL": "http://prometheus:9090/graph?g0.expr=up+%3D%3D+0\u0026g0.tab=1"
+		}
+	],
+	"groupLabels": {
+		"alertname": "InstanceDown"
+	},
+	"commonLabels": {
+		"alertname": "InstanceDown",
+		"instance": "Monitoring",
+		"job": "Monitoring",
+		"org": "SYSMONITORING",
+		"service": "ServiceMonitoring",
+		"severity": "critical",
+		"type": "NODE"
+	},
+	"commonAnnotations": {
+		"description": "Monitoring of job Monitoring has been down for more than 5 minutes.",
+		"summary": "Instance Monitoring down"
+	},
+	"externalURL": "http://alertmanager:9093",
+	"version": "4",
+	"groupKey": "{}:{alertname=\"InstanceDown\"}"
+}
