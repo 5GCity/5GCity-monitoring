@@ -1,0 +1,32 @@
+{
+	"status": "success",
+	"data": [
+		{
+			"labels": {
+				"alertname": "InstanceDown",
+				"instance": "Monitoring",
+				"job": "Monitoring",
+				"org": "SYSMONITORING",
+				"service": "ServiceMonitoring",
+				"severity": "critical",
+				"type": "NODE"
+			},
+			"annotations": {
+				"description": "Monitoring of job Monitoring has been down for more than 5 minutes.",
+				"summary": "Instance Monitoring down"
+			},
+			"startsAt": "2019-08-28T15:23:45.520693759Z",
+			"endsAt": "2019-08-28T15:32:15.523233121Z",
+			"generatorURL": "http://prometheus:9090/graph?g0.expr=up+%3D%3D+0\u0026g0.tab=1",
+			"status": {
+				"state": "active",
+				"silencedBy": [],
+				"inhibitedBy": []
+			},
+			"receivers": [
+				"dashboard"
+			],
+			"fingerprint": "213284abc27555c4"
+		}
+	]
+}
