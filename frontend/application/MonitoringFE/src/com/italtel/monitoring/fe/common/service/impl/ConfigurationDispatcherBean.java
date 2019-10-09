@@ -515,8 +515,8 @@ public class ConfigurationDispatcherBean implements ConfigurationDispatcherServi
 		cmd.append(" \"").append(rule.getExpression()).append("\" ");
 		cmd.append((rule.getDuration() != null) ? rule.getDuration() : "1m").append(" ");
 		cmd.append((rule.getSeverity() != null) ? rule.getSeverity() : "critical").append(" ");
-		cmd.append((rule.getSummary() != null) ? rule.getSummary() : "").append(" ");
-		cmd.append((rule.getDescription() != null) ? rule.getDescription() : "");
+		cmd.append("\"").append((rule.getSummary() != null) ? rule.getSummary() : "").append("\"").append(" ");
+		cmd.append("\"").append((rule.getDescription() != null) ? rule.getDescription() : "").append("\"");
 		
 		String cmdString = cmd.toString();
 		
