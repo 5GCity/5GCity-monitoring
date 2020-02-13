@@ -87,7 +87,7 @@
 		
 		<copy todir="${prod.alertmanager}/config" overwrite="true">
 				<fileset dir="${source.alertmanager}/conf"/>
-		</copy>		
+		</copy>	
 		
 		<copy todir="${prod.prometheus}" overwrite="true">
 				<fileset dir="${source.prometheus}/conf"/>
@@ -112,11 +112,14 @@
 
 		<copy file="${source.prometheus}/conf/prometheus.yml.base" tofile="${prod.prometheus}/prometheus.yml.base.orig" overwrite="true" />
 		<copy file="${source.grafana}/provisioning/datasources/all.yml" tofile="${prod.grafana}/provisioning/datasources/all.yml.orig" overwrite="true" />
+		<copy file="${source.grafana}/provisioning/datasources/all.yml.https.orig" tofile="${prod.grafana}/provisioning/datasources/all.yml.https.orig" overwrite="true" />
 		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml.orig" overwrite="true" />
+		<copy file="${source.central}/docker-compose.yml.https.orig" tofile="${prod.root.release}/docker-compose.yml.https.orig" overwrite="true" />
 		
 		<copy file="${source.central}/docker-compose.yml" tofile="${prod.root.release}/docker-compose.yml" overwrite="true" />
 		<copy file="${source.central}/install.sh" tofile="${prod.root.release}/install.sh" overwrite="true" />
 		<copy file="${source.central}/config.properties.sample" tofile="${prod.root.release}/config.properties.sample" overwrite="true" />
+		<copy file="${source.central}/nginx.conf.sample" tofile="${prod.root.release}/nginx.conf.sample" overwrite="true" />
 		<chmod file="${prod.root.release}/**" perm="777" type="both"/>
 	</target>
 	

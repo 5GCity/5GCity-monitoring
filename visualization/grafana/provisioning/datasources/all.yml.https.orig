@@ -1,0 +1,9 @@
+datasources:
+- name: 'prom1'
+  type: 'prometheus'
+  access: 'Browser'
+  org_id: 1
+  url: 'https://__HOST_MON__/prometheus'
+  is_default: true
+  version: 1
+  editable: true

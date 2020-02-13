@@ -1,0 +1,70 @@
+version: '3.7'
+services:
+
+  5GPrometheus:
+    image: prom/prometheus:v2.3.2
+    container_name: 5GPrometheus
+    hostname: prometheus 
+    volumes:
+      - ./prometheus:/etc/prometheus/
+      - 5Gpromdata:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url=http://__DOMAIN_MON__/prometheus/'
+      - '--web.route-prefix=/'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+    ports:
+      - __PM_PORT_MON__:9090
+      
+  5GAlertmanager:
+    image: prom/alertmanager:v0.19.0
+    container_name: 5GAlertmanager
+    hostname: alertmanager
+    volumes:
+      - ./alertmanager/config:/prometheus
+      - ./alertmanager/data:/data
+    command:
+      - '--config.file=/prometheus/alertmanager.yml'
+      - '--storage.path=/data'
+    ports:
+      - __AM_PORT_MON__:9093     
+
+  5GGrafana:
+    image: grafana/grafana:5.2.4
+    container_name: 5GGrafana
+    hostname: grafana
+    ports:
+      - __GF_PORT_MON__:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/plugins/:/var/lib/grafana/plugins/
+      - ./grafana/dashboards/:/var/lib/grafana/dashboards
+    env_file:
+      - ./grafana/config.monitoring
+
+  5GFrontend:
+    environment:
+      - HOST_MON=__HOST_MON__
+      - GF_PORT_MON=__GF_PORT_MON__
+      - PM_PORT_MON=__PM_PORT_MON__
+    image: jboss/wildfly:14.0.1.Final
+    container_name: 5GFrontend
+    hostname: frontend
+    volumes:
+      - ./frontend/deployments:/opt/jboss/wildfly/standalone/deployments
+      - ./frontend/conf/:/opt/jboss/wildfly/standalone/conf
+      - ./frontend/bin/:/opt/jboss/bin
+      - ./frontend/database/:/monitoring
+      - ./prometheus:/etc/prometheus/
+    ports:
+      - __FE_PORT_MON__:8080
+    command: /opt/jboss/wildfly/bin/standalone.sh -c=../conf/standalone-mon.xml -b 0.0.0.0
+
+volumes:
+    5Gpromdata: {}
+    5Gfrontend:
+    5Gprometheus:
+    5Ggrafana:

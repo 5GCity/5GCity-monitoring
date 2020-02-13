@@ -68,7 +68,7 @@ c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/t
 ##### Dependencies
 
 Last generated deliverable file must be available: MONITORING-<DATE>.tgz 
-(i.e. MONITORING-07-03-2019.tgz)
+(i.e. MONITORING-12-02-2020.tgz)
 
 
 ##### Deployment Setup
@@ -77,38 +77,97 @@ a. Untar file _MONITORING-`<DATE>`.tgz_  in a directory  (i.e. _/opt/monitoring_
     
 - _cd /opt/monitoring_
 - put in this directory the last deliverable file _MONITORING-`<DATE>`.tgz_
-- _tar xvfz `MONITORING-`<DATE>`.tgz_
+- _tar xvfz_  _MONITORING-`<DATE>`.tgz_
 
-b. Install Linux node exporter and run it on test-bed target node
+ b. Install Linux node exporter (and run it as service,  with COLLECTOR Facility)  on test-bed target node
 
 - _mkdir /opt/exporters_
 - _cp /opt/monitoring/exporters/* /opt/exporters_
 - _cd /opt/exporters_
-- _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
-- _cd node_exporter-\*\.\*-amd64_
-- _./node_exporter &_
+- _tar xvfz NODE_EXPORTER_FULL.tgz_
+- _./install.sh_
 
+Note:  in case of problem of install node_exporter as a service, you can simply start node_exporter with collector facility as follows (run this command after all comands above):
+- _/opt/exporters/node/node_exporter --collector.textfile.directory /opt/exporters/collector &_
 
-c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.properties_ must contain the values for the ports used to run grafana(default=3000), prometheus(default=9090) and frontend application(default=8888)
+c. (Mandatory only on first deployment) The file _/opt/monitoring/config\.properties_ must contain the values for the ports used to run grafana(default=3000), prometheus(default=9090) , alert manager (default=9093) and frontend application(default=8888)
 
 - _cp /opt/monitoring/config\.properties\.sample /opt/monitoring/config\.properties_
 
-d. (Optional) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
+d1. (Optional for protocol=http) If you want to use ports'values different from default, please edit this file (_/opt/monitoring/config\.properties_) before to proceed with step e.
+
+d2. (Mandatory for protocol=https when use Prometheus and Grafana behind an nginx reverse proxy https) You must change the value of \__DOMAIN_MON\__, \__FILE_KEY\__ and \__FILE_CRT\__  variable with the value of serverName (domain_name), the fileName.key and the fileName.crt used for ssl authorization https.
 
 e. Run the install.sh script : 
 	
-- _./install.sh `<ManagementIPAddress>` [`<NATIPAddress>`]_
+- _./install.sh_  _`<ManagementIPAddress>` [`<NATIPAddress>`] [`<protocol>`]_
 
 where
+
 _`<ManagementIPAddress>`_ = Management IP address of the your's test-bed target
-and _`<NATIPAddress>`_ = NAT Management IP address of the your's test-bed target, if any.
-	
+
+and _`<NATIPAddress>`_ = NAT Management IP address of the your's test-bed target, if any
+
+and _`<protocol>`_ = _https_ (when use Prometheus and Grafana behind a nginx reverse proxy https,  mandatory in this case) or _http_ (it can be omitted in this case).
+
+
 f. Run command  docker-compose up  in background to startup 5G monitoring application
 
 - _docker-compose up -d_
 
-NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps d., e. and f. again.  
+NOTE: whenever you have an error in startup 5G monitoring application (i.e port already in use), first shutdown the application and then execute steps d1.(d2), e. and f. again.  
  To shutdown the 5G monitoring application run the command: *docker-compose down*
+ 
+ 
+ ##### Use NGINX as proxy server (https) for prometheus and grafana in monitoring server
+ Prerequisites: 
+   
+ - nginx version 1.16.1 :   already installed on monitoring server
+
+ - ssl crt and key files generated for monitoring server  (i.e.  <monitoring_domain.crt>  and< monitoring_domain.key>)
+
+-  the value of the monitoring server domain must be known :  <monitoring_domain>
+
+As root (sudo -i) on monitoring system
+create the directory  /root/certs/monitoring where you must put the ssl files former mentioned
+- _mkdir -p /root/certs /root/certs/monitoring_
+
+copy(sftp) the ssl files above mentioned in /root/certs/monitoring
+- _cp <monitoring_domain.crt> /root/certs/monitoring/<monitoring_domain>.pem_
+- _cp <monitoring_domain.key> /root/certs/monitoring/<monitoring_domain>.key_
+
+ create a file nginx.conf  in /etc/nginx (see an example below *)
+
+ restart nginx  
+-  _systemctl restart nginx_
+
+
+(*)  Here is the /etc/nginx/nginx.conf example  where <monitoring_domain>=5gcity-monitoring.i2cat.net
+
+http {
+
+server {
+listen 443 ssl;
+ssl on;
+ssl_certificate /root/certs/monitoring/5gcity-monitoring.i2cat.net.pem;
+ssl_certificate_key /root/certs/monitoring/5gcity-monitoring.i2cat.net.key;
+server_name 5gcity-monitoring.i2cat.net;
+location /prometheus/ {
+proxy_pass http://localhost:9090/;
+}
+location / {
+root /var/www;
+index index.html index.htm;
+
+proxy_pass http://localhost:3000/;
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-Server $host;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+}
+}
+}
 
 
 ##### Deploy exporters on remote nodes
@@ -117,16 +176,17 @@ Exporters must be installed and running on each remote node
 
 To deploy Linux node exporters and get system metrics:
 
-. You can get it from _https://github.com/prometheus/node_exporter/releases/download/v0.16.0/node_exporter-0.16.0.linux-amd64.tar.gz_) or you can find it on _/opt/monitoring/exporters/node_exporter-0.16.0.linux-amd64.tar.gz_ so you can put this file on remote node on any directory
+. You can get it from _https://github.com/prometheus/node_exporter/releases/download/NODE_EXPORTER_FULL.tgz_) or you can find it on _/opt/monitoring/exporters/NODE_EXPORTER_FULL.tgz_ so you can put this file on remote node on any directory
 
-b. Install on each remote node the Linux node exporter and run it 
+b. Install on each remote node the Linux node exporter and run it as a service with facility collector 
 
-- Access to remote node and put the file _node_exporter-0.16.0.linux-amd64.tar.gz_ on any directory (e.g. `<anydir>`)
+- Access to remote node and put the file NODE_EXPORTER_FULL.tgz_ on any directory (e.g. `<anydir>`)
 - _cd `<anydir>`_
-- _tar xvfz node_exporter-\*\.\*-amd64\.tar\.gz_
-- _cd node_exporter-\*\.\*-amd64_
-- _./node_exporter &_
+- _tar xvfz NODE_EXPORTER_FULL.tgz_
+- _./install.sh_
 
+Note:  in case of problem of install node_exporter as a service, you can simply start node_exporter with collector facility as follows (run this command after all comands above):
+- _/opt/exporters/node/node_exporter --collector.textfile.directory /opt/exporters/collector &_
 
 
 To deploy apache exporters and get apache metrics:
@@ -141,9 +201,9 @@ b. Install on each remote node the apache exporter and run it
 - _cd apache_exporter_
 - _./apache_exporter &_
 
-Otherwise, valid ONLY for monitoring one only remote node from another "node"
-
+Otherwise: valid ONLY for monitoring only one remote node from another "node"
 a2. You can find apache exporter on _/opt/monitoring/exporters/apache_exporter.tar.gz_ so you can put this file on local node on any directory
+
 
 b2. Install on the local node the apache exporter and run it to scrape only one remote node:
 
@@ -161,8 +221,19 @@ _http://`<IPAddressTarget>`:`<FrontEndPort>`/FrontEnd_
 (for example ->  http://10.10.10.10:8888/FrontEnd)
 
 The monitoring system is self-monitored through "monitoring" service.
-
 You can add more services to monitor other remote nodes from the Monitoring WebGUI application or from available REST APIs.
+
+
+About Alerting (Alert Rules and Alerts) please see "Monitoring System's Description (Overview)" document.
+
+
+About Collector Faciltity of Linux node exporter,  to create a "custom" metric use the collect.sh script in /opt/exporters
+- _collect.sh `<customMetricName>` `<value>`_     
+to create a customMetric with effective name collector_`<customMetricName>`, its value and a standard help
+or 
+-  _collect.sh `<customMetricName>` `<value>` "`<customizedHelp>`"_     
+to create a customMetric with effective name collector_`<customMetricName>`, its value  and a customezed help
+
 
 
 ## License
