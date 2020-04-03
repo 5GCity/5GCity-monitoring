@@ -19,9 +19,4 @@
 			</classpath>
 		</taskdef>
 
-		<taskdef resource="proguard/ant/task.properties">
-			<classpath>
-				<pathelement location="${basedir}/lib.tools/proguard.jar" />
-			</classpath>
-		</taskdef>
 </project>

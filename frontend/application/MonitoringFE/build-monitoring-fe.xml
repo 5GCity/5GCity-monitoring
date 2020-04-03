@@ -195,37 +195,6 @@
 			<if>
 				<istrue value="${gen.ear}" />
 				<then>
-					<if>
-						<istrue value="${env.OBFUSCATE}" />
-						<then>
-							<!-- Obfuscate ear bytecode -->
-							<mkdir dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
-
-							<proguard shrink="false" optimize="false" preverify="false" obfuscate="true" ignorewarnings="false" note="false" warn="false" printseeds="obfuscateseeds.txt" printusage="obfuscateusage.txt" printmapping="obfuscatemapping.txt" dump="obfuscatedump.txt">
-								<injar>
-									<fileset dir="${dist.jboss.deployments}" includes="*.jar,*.war" />
-								</injar>
-
-								<!-- java libraries my java application depends on -->
-								<libraryjar name="${env.JAVA_HOME}/jre/lib/rt.jar" />
-								<libraryjar dir="${dist.jboss.deployments}/lib" />
-								<!--libraryjar dir="${lib.classpath.flatten.dir}" /-->
-
-								<outjar name="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
-
-								<keepclasseswithmembers allowshrinking="true" includedescriptorclasses="true">
-									<method type="class" name="*" parameters="native" />
-								</keepclasseswithmembers>
-
-							</proguard>
-
-							<!-- substitute "injars" with "outjar" when obfuscation is complete -->
-							<move todir="${dist.jboss.deployments}">
-								<fileset dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" includes="*.jar,*.war" />
-							</move>
-							<delete dir="${dist.jboss.deployments}/obfuscated_${nm-om.product.name}" />
-						</then>
-					</if>
 
 					<tstamp>
 						<format property="B_TSTAMP" pattern="dd-MM-yyyy HH:mm:ss" locale="it,IT" />
@@ -462,8 +431,6 @@
 
 		</target>
 
-
-	
 </project>
 
 
