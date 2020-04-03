@@ -68,7 +68,7 @@ c. Run the build with Ant to produce the file _`<pathBuild>`/5GCity-monitoring/t
 ##### Dependencies
 
 Last generated deliverable file must be available: MONITORING-<DATE>.tgz 
-(i.e. MONITORING-12-02-2020.tgz)
+(i.e. MONITORING-04-03-2020.tgz)
 
 
 ##### Deployment Setup
