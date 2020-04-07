@@ -11,10 +11,7 @@ GF_PORT_MON=3000
 AM_PORT_MON=9093
 
 # HTTPS needs
-# FILE_KEY and FILE_CRT must be set with the related files that are in /root/certs/monitoring (see example below)
-# DOMAIN_MON=5gcity-monitoring.i2cat.net
-# FILE_KEY=5gcity-monitoring.i2cat.net.key
-# FILE_CRT=5gcity-monitoring.i2cat.net.pem
+# FILE_KEY and FILE_CRT must be set with the related file names that are in /root/certs/monitoring (see example below)
 DOMAIN_MON=__DOMAIN_MON__
 FILE_KEY=__FILE_KEY__
 FILE_CRT=__FILE_CRT__
